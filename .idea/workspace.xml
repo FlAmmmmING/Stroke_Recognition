@@ -4,32 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37a4fbf5-d10c-48e9-8db5-0c925ffb0c95" name="更改" comment="first submit">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/0.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Skeleton_Extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Skeleton_Extraction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Text_Extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Text_Extraction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/0.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/1.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/10.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/10.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/11.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/11.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/12.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/12.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/13.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/13.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/14.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/14.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/2.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/3.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/4.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/5.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/6.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/7.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/7.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/8.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/8.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cutting/9.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/cutting/9.jpg" afterDir="false" />
-    </list>
+    <list default="true" id="37a4fbf5-d10c-48e9-8db5-0c925ffb0c95" name="更改" comment="first submit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,7 +107,7 @@
       <workItem from="1705049279260" duration="827000" />
       <workItem from="1705050122663" duration="4994000" />
       <workItem from="1705055144177" duration="247000" />
-      <workItem from="1705055434872" duration="8251000" />
+      <workItem from="1705055434872" duration="8552000" />
     </task>
     <task id="LOCAL-00001" summary="first submit">
       <option name="closed" value="true" />
@@ -182,7 +157,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705049504568</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="first submit">
+      <option name="closed" value="true" />
+      <created>1705068263538</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1705068263538</updated>
+    </task>
+    <task id="LOCAL-00008" summary="first submit">
+      <option name="closed" value="true" />
+      <created>1705068527995</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1705068527995</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
