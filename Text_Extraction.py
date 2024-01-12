@@ -45,7 +45,7 @@ def Cutting(path, acc):
                 continue
             if p1 == m:
                 p1 -= 1
-            cropped = img[0:n, p0:p1]
+            cropped = img[0:n, max(0, p0 - 1): min(m - 1, p1 + 1)]
             # print(cropped.shape)
             p0 = p1 + 1
             # cv2.imshow("img", cropped)
@@ -82,7 +82,7 @@ def Cutting(path, acc):
                         break
                 if p1 == rows:
                     p1 -= 1
-                cropped = data[p0:p1, 0:cols]
+                cropped = data[max(0, p0 - 1): min(rows - 1, p1 + 1), 0:cols]
                 cv2.imwrite(f"./cutting/{cnt}.jpg", cropped)
                 cnt += 1
                 p0 = p1 + 1
