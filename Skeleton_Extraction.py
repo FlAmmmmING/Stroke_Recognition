@@ -78,10 +78,8 @@ def Skeleton_Extraction(path, threshold_point):
     # 细化算法实现
     # ZS细化算法得到初步骨架
     changing1 = changing2 = [(-1, -1)]
-    cnt = 0
     while changing1 or changing2:
         # 迭代一
-        cnt += 1
         changing1 = []
         for i in range(1, rows - 1):
             for j in range(1, cols - 1):
@@ -111,16 +109,30 @@ def Skeleton_Extraction(path, threshold_point):
 
         for (x, y) in changing2:
             Pretreatment_Image[x][y] = 0
-    print(cnt)
+
+    # 得到ZS骨架后细化代码
+    # 再一次改进骨架：
+    cnt = -1
+    while cnt != 0:
+        cnt = 0
+        for i in range(1, rows - 1):
+            for j in range(1, cols - 1):
+                P9, P2, P3, P8, P4, P7, P6, P5 = Get_Neighbour(i, j, Pretreatment_Image)
+                if (Pretreatment_Image[i][j] == 255 and
+                        ((P2 * P8 == 1 and P4 + P5 + P6 + P9 == 0) or
+                         (P6 * P8 == 1 and P2 + P3 + P4 + P7 == 0) or
+                         (P2 * P4 == 1 and P3 + P6 + P7 + P8 == 0) or
+                         (P4 * P6 == 1 and P2 + P5 + P8 + P9 == 0) or
+                         (P3 + P5 + P7 + P9 == 0 and P2 + P4 + P6 + P8 == 3))):
+                    Pretreatment_Image[i][j] = 0
+                    cnt += 1
+
     cv2.imshow("1", Pretreatment_Image)
     cv2.imwrite('res.jpg', Pretreatment_Image)
     cv2.waitKey(0)
 
-    # 得到ZS骨架后细化代码
-    # 明天再写……
-
 
 if __name__ == '__main__':
-    path = "./cutting/13.jpg"
+    path = "./cutting/12.jpg"
     # threshold_point：是过滤掉连通域大小小于threshold_point，后期设计上可以追加一个用户自适应过滤机制
     Skeleton_Extraction(path, threshold_point=100)

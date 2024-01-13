@@ -13,15 +13,15 @@ def Cutting(path, acc):
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
-    n = img.shape[0]
-    m = img.shape[1]
-    print(n)
-    print(m)
+    rows = img.shape[0]
+    cols = img.shape[1]
+    print(rows)
+    print(cols)
     # 初始化一个数组，用来判断这个图片的每一列是否满足有字的特性
-    judge_col = m * [0]
+    judge_col = cols * [0]
     # 开始遍历
-    for i in range(m):
-        for j in range(n):
+    for i in range(cols):
+        for j in range(rows):
             if img[j][i] == 0:
                 judge_col[i] = 1
                 break
@@ -30,10 +30,10 @@ def Cutting(path, acc):
     cut_in_col = []
     # 快慢指针搜索judge_col连续的1串
     p0 = 0
-    while p0 < m:
+    while p0 < cols:
         if judge_col[p0] == 1:
             p1 = p0 + 1
-            while p1 < m:
+            while p1 < cols:
                 if judge_col[p1] == 1:
                     p1 += 1
                 else:
@@ -43,9 +43,9 @@ def Cutting(path, acc):
             if p1 - p0 < 10:
                 p0 = p1 + 1
                 continue
-            if p1 == m:
+            if p1 == cols:
                 p1 -= 1
-            cropped = img[0:n, max(0, p0 - 1): min(m - 1, p1 + 1)]
+            cropped = img[0:rows, max(0, p0 - 1): min(cols - 1, p1 + 1)]
             # print(cropped.shape)
             p0 = p1 + 1
             # cv2.imshow("img", cropped)
@@ -59,7 +59,7 @@ def Cutting(path, acc):
     for data in cut_in_col:
         cv2.imshow("c", data)
         cv2.waitKey(0)
-        judge_row = n * [0]
+        judge_row = rows * [0]
         rows = data.shape[0]
         cols = data.shape[1]
         print(rows)
