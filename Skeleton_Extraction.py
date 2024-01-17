@@ -56,7 +56,7 @@ def Cavity_Deal(img):
     return res
 
 
-def Skeleton_Extraction(path, threshold_point):
+def Skeleton_Extraction(path, threshold_point, photo):
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -127,12 +127,14 @@ def Skeleton_Extraction(path, threshold_point):
                     Pretreatment_Image[i][j] = 0
                     cnt += 1
 
-    cv2.imshow("1", Pretreatment_Image)
-    cv2.imwrite('res.jpg', Pretreatment_Image)
-    cv2.waitKey(0)
+    # cv2.imshow("1", Pretreatment_Image)
+    cv2.imwrite(f'Skeleton/skeleton{photo}.jpg', Pretreatment_Image)
+    print(photo)
+    # cv2.waitKey(0)
 
 
 if __name__ == '__main__':
-    path = "./cutting/12.jpg"
-    # threshold_point：是过滤掉连通域大小小于threshold_point，后期设计上可以追加一个用户自适应过滤机制
-    Skeleton_Extraction(path, threshold_point=100)
+    for photo in range(0, 15):
+        path = f"./cutting/{photo}.jpg"
+        # threshold_point：是过滤掉连通域大小小于threshold_point，后期设计上可以追加一个用户自适应过滤机制
+        Skeleton_Extraction(path, 100, photo)
