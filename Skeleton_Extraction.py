@@ -74,7 +74,7 @@ def Skeleton_Extraction(path, threshold_point, photo):
     resMatrix *= 255
     # 处理空洞算法
     Pretreatment_Image = Cavity_Deal(img=resMatrix)
-    # Pretreatment_Image.astype(int)
+    cv2.imwrite(f'Pretreatment_Image/pt_img{photo}.jpg', Pretreatment_Image)
     # 细化算法实现
     # ZS细化算法得到初步骨架
     changing1 = changing2 = [(-1, -1)]
