@@ -1,6 +1,7 @@
 # ocr识别书法文字
 # 2024/1/20 洪一芃
 from paddleocr import PaddleOCR
+from Text_Stroke_Table import Text_Storke_Table
 import ast
 
 def recognize_chinese_character(image_path):
@@ -35,11 +36,15 @@ def solve(result_str):
 
 
 # demo
-result_str = recognize_chinese_character('cutting/0.jpg')
+result_str = recognize_chinese_character('cutting/13.jpg')
 coordinates, recognition = solve(result_str)
 
 # print("坐标字典:", coordinates)
 # print("识别结果字典:", recognition)
 
 print("坐标:", coordinates[0])
-print("识别结果:", recognition[0])
+print("识别结果:", recognition[0][0])
+
+TST = Text_Storke_Table()
+
+print(TST.get_Stork(recognition[0][0]))
