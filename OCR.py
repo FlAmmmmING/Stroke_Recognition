@@ -12,6 +12,7 @@ def recognize_chinese_character(image_path):
 
     return result
 
+
 def solve(result_str):
     # 将字符串格式的结果转换回列表
     nested_result = ast.literal_eval(result_str)
@@ -32,8 +33,9 @@ def solve(result_str):
 
     return coordinates_dict, recognition_dict
 
+
 # demo
-result_str = recognize_chinese_character('./Skeleton/skeleton10.jpg')
+result_str = recognize_chinese_character('cutting/0.jpg')
 coordinates, recognition = solve(result_str)
 
 # print("坐标字典:", coordinates)
