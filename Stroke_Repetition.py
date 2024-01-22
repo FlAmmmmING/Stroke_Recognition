@@ -75,11 +75,11 @@ def Repetition(picture_name):
     for (x, y) in start_point:
         original_image[x][y] = (0, 0, 255)
     for (x, y) in intersection_point:
-        original_image[x][y] = (255, 0, 0)
+        original_image[x][y] = (0, 255, 0)
     cv2.imwrite("Start_and_Intersection_Point.jpg", np.uint8(original_image))
     cv2.waitKey(0)
 
 
 # 测试模块
 if __name__ == '__main__':
-    Repetition("11.jpg")
+    Repetition("8.jpg")
