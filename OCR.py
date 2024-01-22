@@ -3,6 +3,10 @@
 from paddleocr import PaddleOCR
 from Text_Stroke_Table import Text_Storke_Table
 import ast
+import os
+
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 
 def recognize_chinese_character(image_path):
     # 创建一个OCR模型
