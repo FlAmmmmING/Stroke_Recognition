@@ -1,6 +1,4 @@
 # 这个文件用来分割书法字贴的文字
-from PIL import Image
-import numpy as np
 import cv2
 
 
