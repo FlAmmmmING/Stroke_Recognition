@@ -48,4 +48,5 @@ Thumbs.db
 /mvnw.cmd
 /mvnw
 
+*.csv
 code_example.txt
