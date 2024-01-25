@@ -81,6 +81,37 @@ def Repetition_Detection(stroke_img, x, y, visit_map, val=1, jud=0):
         return '3', (x - 1, y + 1)
 
 
+def Return_Next_AXIS(now_x, now_y, c):
+    """
+    给定八邻域点，返回下一个坐标
+    :param now_x:
+    :param now_y:
+    :param c:
+    :return:
+    """
+    if c == "2":
+        now_x = now_x - 1
+    elif c == "3":
+        now_x = now_x - 1
+        now_y = now_y + 1
+    elif c == "4":
+        now_y = now_y + 1
+    elif c == "5":
+        now_x = now_x + 1
+        now_y = now_y + 1
+    elif c == "6":
+        now_x = now_x + 1
+    elif c == "7":
+        now_x = now_x + 1
+        now_y = now_y - 1
+    elif c == "8":
+        now_y = now_y - 1
+    elif c == "9":
+        now_x = now_x - 1
+        now_y = now_y - 1
+    return now_x, now_y
+
+
 # 重置visit_map的遍历笔画操作
 def Reset_Map(begin_point_x, begin_point_y, stroke_string, visit_map, val):
     """
@@ -94,26 +125,7 @@ def Reset_Map(begin_point_x, begin_point_y, stroke_string, visit_map, val):
     now_x = begin_point_x
     now_y = begin_point_y
     for c in stroke_string:
-        if c == "2":
-            now_x = now_x - 1
-        elif c == "3":
-            now_x = now_x - 1
-            now_y = now_y + 1
-        elif c == "4":
-            now_y = now_y + 1
-        elif c == "5":
-            now_x = now_x + 1
-            now_y = now_y + 1
-        elif c == "6":
-            now_x = now_x + 1
-        elif c == "7":
-            now_x = now_x + 1
-            now_y = now_y - 1
-        elif c == "8":
-            now_y = now_y - 1
-        elif c == "9":
-            now_x = now_x - 1
-            now_y = now_y - 1
+        now_x, now_y = Return_Next_AXIS(now_x, now_y, c)
         visit_map[now_x][now_y] = val
 
 
@@ -124,7 +136,7 @@ def Judge_Intersection(x, y, stroke_img, visit_intersection_point, visit_start_p
     :param visit_start_point: 起始点坐标映射
     :param x: 坐标
     :param y: 坐标
-    :param visit_intersection_point: 骨架图
+    :param visit_intersection_point: 交点元组
     :param dict: 交点 default dict
     :param area: 范围
     :return: 返回需要合并与否的数值(布尔类型)，合并路径，下一个可能的方向的元组，下一个交点坐标
@@ -247,6 +259,7 @@ def Repetition(picture_name):
 
     # 用于存放笔画，起始像素点-笔画-结束像素点
     get_stroke = []
+
     # visit_map是用来检测这个点是否已经被笔画遍历过了
     # visit_map数值说明: 当visit_map == 0 的时候，表示这个点没有被遍历到，
     #                   当visit_map == 1 的时候，这个点已经被遍历到了，而且这个点是笔画遍历点，之后不会再遍历了
@@ -260,6 +273,8 @@ def Repetition(picture_name):
         # 记录一下这个笔画
         stroke = ""
         (now_x, now_y) = (x, y)
+        # 最小笔画单元记录
+        (now_unit_x, now_unit_y) = (x, y)
         while True:
             now_detection, (now_x, now_y) = Repetition_Detection(skeleton_image, now_x, now_y, visit_map, 1)
             stroke += now_detection
@@ -283,8 +298,7 @@ def Repetition(picture_name):
                     # 交点合并之后,把交点笔画加到当前笔画上
                     stroke += merge_str
                     # 将交点转移
-                    now_x, now_y = next_intersection_axis
-
+                    (now_x, now_y) = next_intersection_axis
                     # 接下来需要考虑以下算法: 笔画截断方案
 
 
@@ -294,6 +308,8 @@ def Repetition(picture_name):
                 else:
                     # 如果交点周围没有别的交点的，这里建议是继续延续当前方向
                     # 如果没有找到合适的交点方向，则这里建议是将当前笔画设置为最终笔画
+                    last_stroke_direction = stroke[-1]
+                    next_x, next_y = Return_Next_AXIS(now_x, now_y, last_stroke_direction)
                     get_stroke.append(((x, y), stroke, (now_x, now_y)))
                     break
 
