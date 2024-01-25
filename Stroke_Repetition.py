@@ -285,7 +285,7 @@ def Repetition(picture_name):
                     # 将交点转移
                     now_x, now_y = next_intersection_axis
 
-                    # 接下来需要考虑以下算法: 笔画截至方案
+                    # 接下来需要考虑以下算法: 笔画截断方案
 
 
 
