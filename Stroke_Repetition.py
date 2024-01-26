@@ -33,12 +33,15 @@ def Point_Judgement(stroke_img, x, y):
     :param stroke_img: 骨架图
     :param x: 中心点的x
     :param y: 中心点的y
+    :param visit_map: 遍历过的点
     :return:
     """
     arr = [stroke_img[x - 1][y - 1], stroke_img[x - 1][y], stroke_img[x - 1][y + 1], stroke_img[x][y + 1],
            stroke_img[x + 1][y + 1], stroke_img[x + 1][y],
            stroke_img[x + 1][y - 1], stroke_img[x][y - 1]]
+
     cnt = 0
+    # 当且仅当——这个地方的point是255并且这个地方的点是未被遍历过的才算
     if arr[0] == arr[-1] and arr[0] == 255:
         cnt -= 1
     pre = 0
@@ -154,7 +157,7 @@ def Judge_Intersection(x, y, stroke_img, visit_intersection_point, visit_start_p
             break
     # 没找到， 返回false
     if ret_x == -1 and ret_y == -1:
-        return False, *False
+        return False, "", [], (-1, -1)
     # 已知这两个点，如何能快速找到这个路径？
     # 根据交点的性质，只需要遍历一遍它的八邻域即可
     direction_detection = [((x - 1, y), "2"), ((x - 1, y + 1), "3"), ((x, y + 1), "4"), ((x + 1, y + 1), "5"),
@@ -165,7 +168,7 @@ def Judge_Intersection(x, y, stroke_img, visit_intersection_point, visit_start_p
         # 之前点是我开始遍历的中心点
         ret_String = now_direction
         dir_x, dir_y = next_go_x, next_go_y
-        if stroke_img[dir_x][dir_y] == 0:
+        if stroke_img[dir_x][dir_y] == 0 or visit_map[dir_x][dir_y] != 0:
             continue
         while True:
             now_detection, (dir_x, dir_y) = Repetition_Detection(stroke_img,
@@ -209,7 +212,6 @@ def Judge_Intersection(x, y, stroke_img, visit_intersection_point, visit_start_p
                             ((next_possible_x, next_possible_y), next_possible_direction))
                 return True, ret_String, next_direction_possibilities, (ret_x, ret_y)
 
-
 # 识别器
 def Repetition(picture_name):
     pn = picture_name
@@ -225,6 +227,7 @@ def Repetition(picture_name):
     # original_image = cv2.imread("Skeleton/" + pn)
     ret, skeleton_image = cv2.threshold(cv2.imread("Skeleton/" + pn, cv2.IMREAD_GRAYSCALE), 0, 255,
                                         cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    visit_map = np.zeros(skeleton_image.shape, dtype=int)
     # cv2.imshow("1", Skeleton_Image)
     # cv2.waitKey(0)
     # 起始点，交点的检测算法, 数组存储的是点的坐标
@@ -239,7 +242,7 @@ def Repetition(picture_name):
     area = int(max(rows, cols) * 0.05)
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
-            if skeleton_image[i][j] != 255:
+            if skeleton_image[i][j] != 255 or visit_map[i][j] != 0:
                 continue
             continuous_substring_num = Point_Judgement(skeleton_image, i, j)
             if continuous_substring_num == 1:
@@ -264,7 +267,6 @@ def Repetition(picture_name):
     # visit_map数值说明: 当visit_map == 0 的时候，表示这个点没有被遍历到，
     #                   当visit_map == 1 的时候，这个点已经被遍历到了，而且这个点是笔画遍历点，之后不会再遍历了
     #                   当visit_map == -1的时候，这个点是两个交点之间的点，之后有可能再遍历到
-    visit_map = np.zeros(skeleton_image.shape, dtype=int)
     # 这个图像用于遍历
     for (x, y) in start_point:
         if not visit_start_point[(x, y)]:
@@ -273,8 +275,6 @@ def Repetition(picture_name):
         # 记录一下这个笔画
         stroke = ""
         (now_x, now_y) = (x, y)
-        # 最小笔画单元记录
-        (now_unit_x, now_unit_y) = (x, y)
         while True:
             now_detection, (now_x, now_y) = Repetition_Detection(skeleton_image, now_x, now_y, visit_map, 1)
             stroke += now_detection
@@ -283,8 +283,11 @@ def Repetition(picture_name):
             if (now_x, now_y) in visit_start_point:
                 visit_start_point[(now_x, now_y)] = False
                 get_stroke.append(((x, y), stroke, (now_x, now_y)))
+                # 更新起始点
+
                 break
             # 如果这个点是交点？需要进一步的算法设计了
+            # 新的起始点有且仅有可能会在交点处出现，所以这里只需要判断一下交点就可以了
             if (now_x, now_y) in intersection_point:
                 ret, merge_str, next_direction_possibilities, next_intersection_axis = (
                     Judge_Intersection(
@@ -294,24 +297,33 @@ def Repetition(picture_name):
                         visit_start_point,
                         area,
                         visit_map))
+                # 合并之后最有可能笔画执行的地方
+                most_possible_direction = stroke[-1]
                 if ret:
                     # 交点合并之后,把交点笔画加到当前笔画上
                     stroke += merge_str
                     # 将交点转移
                     (now_x, now_y) = next_intersection_axis
-                    # 接下来需要考虑以下算法: 笔画截断方案
-
-
-
-
-
+                    # next_direction_possibilities存放的就是接下来可能的笔画
+                next_x, next_y = Return_Next_AXIS(now_x, now_y, most_possible_direction)
+                if skeleton_image[next_x][next_y] == 255:
+                    # 下一个遍历点
+                    now_x, now_y = next_x, next_y
+                    continue
                 else:
-                    # 如果交点周围没有别的交点的，这里建议是继续延续当前方向
-                    # 如果没有找到合适的交点方向，则这里建议是将当前笔画设置为最终笔画
-                    last_stroke_direction = stroke[-1]
-                    next_x, next_y = Return_Next_AXIS(now_x, now_y, last_stroke_direction)
                     get_stroke.append(((x, y), stroke, (now_x, now_y)))
                     break
+                # else:
+                #     # 如果交点周围没有别的交点的，这里建议是继续延续当前方向
+                #     # 如果没有找到合适的交点方向，则这里建议是将当前笔画设置为最终笔画
+                #     next_x, next_y = Return_Next_AXIS(now_x, now_y, most_possible_direction)
+                #     if skeleton_image[next_x][next_y] == 255:
+                #         # 下一个遍历点
+                #         now_x, now_y = next_x, next_y
+                #         continue
+                #     else:
+                #         get_stroke.append(((x, y), stroke, (now_x, now_y)))
+                #         break
 
 
 # 测试模块
