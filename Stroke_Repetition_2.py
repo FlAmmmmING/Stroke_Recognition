@@ -119,7 +119,7 @@ def Looking_for_Short_Stroke(skeleton_image, visit_map):
                         if skeleton_image[xx][yy] == 255 and not visit_map[xx][yy]:
                             que.put((xx, yy))
                 # 太小的短笔画我不要
-                if len(one_short_stroke) <= max(skeleton_image.shape) / 50:
+                if len(one_short_stroke) <= max(skeleton_image.shape) // 40:
                     continue
                 short_stroke.append(one_short_stroke)
     return short_stroke
@@ -145,6 +145,7 @@ def Repetition_2(folder, name):
     stroke_picture = np.zeros([skeleton_image.shape[0], skeleton_image.shape[1], 3], dtype="uint8")
     print(f"这个字的短笔画数量是{len(short_stroke)}")
     stroke_num = 0
+    # print(short_stroke)
     for one_short_stroke in short_stroke:
         for (x, y) in one_short_stroke:
             stroke_picture[x][y] = STOKE_COLOR[stroke_num]
@@ -156,5 +157,5 @@ def Repetition_2(folder, name):
 
 if __name__ == '__main__':
     picture_folder = "Skeleton"
-    picture_name = "5.jpg"
+    picture_name = "8.jpg"
     Repetition_2(picture_folder, picture_name)
