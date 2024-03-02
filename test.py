@@ -1,6 +1,131 @@
 # 这个文件用来测试一些python代码的实用性\
+import math
+import queue
+
 import cv2
 import numpy as np
+
+
+def get_radius(dir_x, dir_y, original_img, core):
+    """
+    确定半径大小
+    :param dir_x: 方向
+    :param dir_y: 方向
+    :param original_img: 原始图片
+    :param core: 圆心坐标
+    :return: 返回半径
+    """
+    # 备案1 —— 八个方向取最小值确定半径
+    # 这种方法较为稳定，但是缺点是可能会使得一些笔画无法覆盖
+    # radius = 100000000
+    # iter_x, iter_y = item[i]
+    # radius_x, radius_y = 0, 0
+    # tep_radius = 0
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_y -= 1
+    # radius = min(radius, tep_radius)
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_y += 1
+    # radius = min(radius, tep_radius)
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x -= 1
+    # radius = min(radius, tep_radius)
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x += 1
+    # radius = min(radius, tep_radius)
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x -= 1
+    #     iter_y -= 1
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x += 1
+    #     iter_y += 1
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x -= 1
+    #     iter_y += 1
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # tep_radius = 0
+    # iter_x, iter_y = item[i]
+    # while original_img[iter_x, iter_y] == 0:
+    #     tep_radius += 1
+    #     iter_x += 1
+    #     iter_y -= 1
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+
+    # 备案2 —— 按照轨迹方向确定半径
+    # 这种方法较为冒险，可能会出现笔画崩溃的现象，但是它有良好的覆盖性
+    radius_x = 0
+    radius_y = 0
+    iter_x, iter_y = core
+    # 开始计算半径
+    if dir_y == 0:
+        # 寻找 y = 0 这条线
+        # 先找左边
+        while original_img[iter_x][iter_y] == 0:
+            radius_x += 1
+            iter_y -= 1
+        iter_x, iter_y = core
+        # 再找右边
+        while original_img[iter_x][iter_y] == 0:
+            radius_y += 1
+            iter_y += 1
+    elif dir_x == 0:
+        # 寻找 x = 0 这条线
+        # 先找上边
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+        iter_x, iter_y = core
+        # 再找下边
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+    elif dir_x * dir_y == -1:
+        # 寻找 x + y = 0 这条线
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+            iter_y -= 1
+        iter_x, iter_y = core
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+            iter_y += 1
+    else:
+        # 寻找x - y = 0 这条边
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+            iter_y += 1
+        iter_x, iter_y = core
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+            iter_y -= 1
+    radius = min(radius_x, radius_y)
+    if dir_x * dir_y:
+        radius = round(radius * 1.4142135623730951)
+    return radius
 
 
 def generate_fps(template_img, original_img, Stroke, Save_dir):
@@ -21,116 +146,59 @@ def generate_fps(template_img, original_img, Stroke, Save_dir):
     """
     cnt = 0
     iter_img = template_img.copy()
+
+    # 广度优先遍历队列
+    q = queue.Queue()
+    dx = [1, -1, 0, 0]
+    dy = [0, 0, -1, 1]
+
     for item in Stroke:
         for i in range(1, len(item)):
+            visit_map = np.zeros_like(original_img, dtype=bool)
             dir_x, dir_y = item[i][0] - item[i - 1][0], item[i][1] - item[i - 1][1]
-            radius = 100000000
-            iter_x, iter_y = item[i]
-            radius_x, radius_y = 0, 0
-            tep_radius = 0
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_y -= 1
-            radius = min(radius, tep_radius)
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_y += 1
-            radius = min(radius, tep_radius)
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x -= 1
-            radius = min(radius, tep_radius)
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x += 1
-            radius = min(radius, tep_radius)
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x -= 1
-                iter_y -= 1
-            radius = min(radius, round(tep_radius * 1.4142135623730951))
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x += 1
-                iter_y += 1
-            radius = min(radius, round(tep_radius * 1.4142135623730951))
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x -= 1
-                iter_y += 1
-            radius = min(radius, round(tep_radius * 1.4142135623730951))
-            tep_radius = 0
-            iter_x, iter_y = item[i]
-            while original_img[iter_x, iter_y] == 0:
-                tep_radius += 1
-                iter_x += 1
-                iter_y -= 1
-            radius = min(radius, round(tep_radius * 1.4142135623730951))
-
-            # # 开始计算半径
-            # if dir_y == 0:
-            #     # 寻找 y = 0 这条线
-            #     # 先找左边
-            #     while original_img[iter_x][iter_y] == 0:
-            #         radius_x += 1
-            #         iter_y -= 1
-            #     iter_x, iter_y = item[i]
-            #     # 再找右边
-            #     while original_img[iter_x][iter_y] == 0:
-            #         radius_y += 1
-            #         iter_y += 1
-            # elif dir_x == 0:
-            #     # 寻找 x = 0 这条线
-            #     # 先找上边
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_x += 1
-            #         iter_x -= 1
-            #     iter_x, iter_y = item[i]
-            #     # 再找下边
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_y += 1
-            #         iter_x += 1
-            # elif dir_x * dir_y == -1:
-            #     # 寻找 x + y = 0 这条线
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_x += 1
-            #         iter_x -= 1
-            #         iter_y -= 1
-            #     iter_x, iter_y = item[i]
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_y += 1
-            #         iter_x += 1
-            #         iter_y += 1
-            # else:
-            #     # 寻找x - y = 0 这条边
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_x += 1
-            #         iter_x -= 1
-            #         iter_y += 1
-            #     iter_x, iter_y = item[i]
-            #     while original_img[iter_x, iter_y] == 0:
-            #         radius_y += 1
-            #         iter_x += 1
-            #         iter_y -= 1
-            # radius = min(radius_x, radius_y)
-            # if dir_x * dir_y:
-            #     radius = round(radius * 1.4142135623730951)
-            print(f"circle_point = ({item[i][0]}, {item[i][1]}) , radius: {radius}")
+            radius = get_radius(dir_x, dir_y, original_img, item[i])
+            print(f"圆心：({item[i][0]}, {item[i][1]}), 半径: {radius}")
+            # 开始分帧
+            cnt += 1
+            # 接下来的问题是，确定了圆心和半径，如何绘制圆
+            # 一种妥协的方式： 广度优先搜索， 时间复杂度较低
+            q.put(item[i])
+            visit_map[item[i][0], item[i][1]] = True
+            while not q.empty():
+                now_x, now_y = q.get()
+                # distance = round(math.sqrt(pow(now_x - item[i][0], 2) + pow(now_y - item[i][1], 2)))
+                # if distance > radius:
+                #     continue
+                iter_img[now_x, now_y] = (0, 0, 0)
+                for j in range(4):
+                    next_x = now_x + dx[j]
+                    next_y = now_y + dy[j]
+                    if original_img[next_x, next_y] == 255 or visit_map[next_x, next_y] or \
+                            round(math.sqrt(pow(next_x - item[i][0], 2) + pow(next_y - item[i][1], 2))) > radius:
+                        continue
+                    q.put((next_x, next_y))
+                    visit_map[next_x, next_y] = True
+            cv2.imwrite(Save_dir + "/" + f"{cnt}.jpg", iter_img)
 
 
-# def generate_video():
+def generate_video(picture_folder, ret_folder):
+    """
+
+    :param picture_folder: 图片保存的文件夹
+    :param ret_folder: 视频保存点
+    :return: 返回视频
+    """
+    video_size = cv2.imread(picture_folder + "/1.jpg", cv2.COLOR_BGR2GRAY).shape
+    # 视频帧数
+    fps = 30
+    video = cv2.VideoWriter(ret_folder + "\\video.avi", cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps,
+                            video_size)
+    for item in picture_folder:
+        img = cv2.imread(item)
+        video.write(img)
+
+    video.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
@@ -179,6 +247,10 @@ if __name__ == '__main__':
          (135, 67), (135, 66)],
         [(137, 63), (138, 62), (139, 61), (140, 60), (140, 59), (140, 58), (140, 57), (140, 56), (140, 55), (139, 54),
          (139, 53), (139, 52), (139, 51), (139, 50), (138, 49)]]
+    One_Stroke_for_test = [[(3, 77), (4, 78), (5, 79), (6, 80), (6, 81), (7, 82), (8, 83), (9, 84), (10, 85), (11, 86), (12, 87), (13, 88),
+         (14, 88), (15, 89), (16, 89), (17, 90), (18, 90), (19, 90), (20, 90), (21, 90), (22, 90), (23, 90), (24, 90),
+         (25, 90), (26, 90), (27, 90), (28, 90), (29, 90), (30, 90), (31, 90), (32, 90), (33, 90), (34, 90), (35, 90),
+         (36, 90), (37, 90), (38, 90), (39, 90), (40, 90), (41, 90)]]
     img = cv2.imread('cutting/8.jpg', cv2.COLOR_BGR2GRAY)
     img[img < 100] = 0
     img[img >= 100] = 255
@@ -189,7 +261,9 @@ if __name__ == '__main__':
         for (x, y) in item:
             ret_img[x][y] = [93, 194, 56]
     Save_dir = "folder_for_testing"
-    generate_fps(ret_img, img, Stroke, Save_dir)
+    Save_dir_video = "folder_for_video"
+    generate_fps(ret_img, img, One_Stroke_for_test, Save_dir)
+    # generate_video(Save_dir, Save_dir_video)
     # cv2.imwrite("test.jpg", ret_img)
     # cv2.imshow('img', ret_img)
     # cv2.waitKey(0)

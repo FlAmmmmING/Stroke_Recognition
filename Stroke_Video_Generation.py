@@ -6,33 +6,212 @@
 
 import cv2
 import numpy as np
+import math
+import queue
 
 
-def make_circle(ret_img, original_image, x, y, stroke_direction, p):
+def get_radius(dir_x, dir_y, original_img, core):
     """
-    根据前一个坐标和当前坐标的相对关系，确定这个圆应该怎么画
-    :param ret_img: 需要返回的图片
-    :param original_image: 原始图片
-    :param x: 圆心坐标
-    :param y: 圆心坐标
-    :param stroke_direction: 笔画坐标数组
-    :param p: 当前笔画遍历到了哪个点
+    确定半径大小
+    :param dir_x: 方向
+    :param dir_y: 方向
+    :param original_img: 原始图片
+    :param core: 圆心坐标
+    :return: 返回半径
+    """
+    # 备案1 —— 八个方向取最小值确定半径
+    # 这种方法较为稳定，但是缺点是可能会使得一些笔画无法覆盖
+    radius = 100000000
+    iter_x, iter_y = core
+    radius_x, radius_y = 0, 0
+    tep_radius = 0
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_y -= 1
+    radius = min(radius, tep_radius)
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_y += 1
+    radius = min(radius, tep_radius)
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x -= 1
+    radius = min(radius, tep_radius)
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x += 1
+    radius = min(radius, tep_radius)
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x -= 1
+        iter_y -= 1
+    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x += 1
+        iter_y += 1
+    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x -= 1
+        iter_y += 1
+    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    tep_radius = 0
+    iter_x, iter_y = core
+    while original_img[iter_x, iter_y] == 0:
+        tep_radius += 1
+        iter_x += 1
+        iter_y -= 1
+    radius = min(radius, round(tep_radius * 1.4142135623730951))
+
+    # 备案2 —— 按照轨迹方向确定半径
+    # 这种方法较为冒险，可能会出现笔画崩溃的现象，但是它有良好的覆盖性
+    # radius_x = 0
+    # radius_y = 0
+    # iter_x, iter_y = core
+    # # 开始计算半径
+    # if dir_y == 0:
+    #     # 寻找 y = 0 这条线
+    #     # 先找左边
+    #     while original_img[iter_x][iter_y] == 0:
+    #         radius_x += 1
+    #         iter_y -= 1
+    #     iter_x, iter_y = core
+    #     # 再找右边
+    #     while original_img[iter_x][iter_y] == 0:
+    #         radius_y += 1
+    #         iter_y += 1
+    # elif dir_x == 0:
+    #     # 寻找 x = 0 这条线
+    #     # 先找上边
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_x += 1
+    #         iter_x -= 1
+    #     iter_x, iter_y = core
+    #     # 再找下边
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_y += 1
+    #         iter_x += 1
+    # elif dir_x * dir_y == -1:
+    #     # 寻找 x + y = 0 这条线
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_x += 1
+    #         iter_x -= 1
+    #         iter_y -= 1
+    #     iter_x, iter_y = core
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_y += 1
+    #         iter_x += 1
+    #         iter_y += 1
+    # else:
+    #     # 寻找x - y = 0 这条边
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_x += 1
+    #         iter_x -= 1
+    #         iter_y += 1
+    #     iter_x, iter_y = core
+    #     while original_img[iter_x, iter_y] == 0:
+    #         radius_y += 1
+    #         iter_x += 1
+    #         iter_y -= 1
+    # radius = min(radius_x, radius_y)
+    # if dir_x * dir_y:
+    #     radius = round(radius * 1.4142135623730951)
+    return radius
+
+
+def generate_fps(template_img, original_img, Stroke, Save_dir):
+    """
+    :param Save_dir: 保存的地址
+    :param template_img: 空白模板
+    :param original_img: 原图
+    :param Stroke: 笔画
     :return:
     """
-    # 首先确定这次笔画的方向
-    (dir_x, dir_y) = stroke_direction[p] - stroke_direction[p - 1]
+    # 用来存储图片编号的，以便接下来合成视频
     """
-        这里整理一下(dir_x, dir_y)的取值对八邻域的关系
-        (dir_x, dir_y) == (0, 1) 或者 (0, -1) 则半径的选取为 x = 0 这条直线
-        (dir_x, dir_y) == (1, 0) 或者 (-1, 0) 则半径的选取为 y = 0 这条直线
-        (dir_x, dir_y) == (1, 1) 或者 (-1, -1) 则半径的选取为 y = -x 这条直线
-        (dir_x, dir_y) == (1, -1) 或者 (-1, 1) 则半径的选取为 y = x 这条直线
-        半径的长度如此定义 -> 沿着直线寻找两个端点，寻找最近的一个端点距离圆心的位移距离作为这个圆的半径
+            这里整理一下(dir_x, dir_y)的取值对八邻域的关系
+            (dir_x, dir_y) == (0, 1) 或者 (0, -1) 则半径的选取为 x = 0 这条直线
+            (dir_x, dir_y) == (1, 0) 或者 (-1, 0) 则半径的选取为 y = 0 这条直线
+            (dir_x, dir_y) == (1, 1) 或者 (-1, -1) 则半径的选取为 y = x 这条直线
+            (dir_x, dir_y) == (1, -1) 或者 (-1, 1) 则半径的选取为 y = -x 这条直线
+            半径的长度如此定义 -> 沿着直线寻找两个端点，寻找最近的一个端点距离圆心的位移距离作为这个圆的半径
     """
-    cv2.circle(ret_img, (x, y), radius=5, color=(0, 255, 255))
+    cnt = 0
+    iter_img = template_img.copy()
+
+    # 广度优先遍历队列
+    q = queue.Queue()
+    dx = [1, -1, 0, 0]
+    dy = [0, 0, -1, 1]
+
+    for item in Stroke:
+        for i in range(1, len(item)):
+            visit_map = np.zeros_like(original_img, dtype=bool)
+            dir_x, dir_y = item[i][0] - item[i - 1][0], item[i][1] - item[i - 1][1]
+            radius = get_radius(dir_x, dir_y, original_img, item[i])
+            print(f"圆心：({item[i][0]}, {item[i][1]}), 半径: {radius}")
+            # 开始分帧
+            cnt += 1
+            # 接下来的问题是，确定了圆心和半径，如何绘制圆
+            # 一种妥协的方式： 广度优先搜索， 时间复杂度较低
+            q.put(item[i])
+            visit_map[item[i][0], item[i][1]] = True
+            while not q.empty():
+                now_x, now_y = q.get()
+                # distance = round(math.sqrt(pow(now_x - item[i][0], 2) + pow(now_y - item[i][1], 2)))
+                # if distance > radius:
+                #     continue
+                iter_img[now_x, now_y] = (0, 0, 0)
+                for j in range(4):
+                    next_x = now_x + dx[j]
+                    next_y = now_y + dy[j]
+                    if original_img[next_x, next_y] == 255 or visit_map[next_x, next_y] or \
+                            round(math.sqrt(pow(next_x - item[i][0], 2) + pow(next_y - item[i][1], 2))) > radius:
+                        continue
+                    q.put((next_x, next_y))
+                    visit_map[next_x, next_y] = True
+            cv2.imwrite(Save_dir + "/" + f"{cnt}.jpg", iter_img)
 
 
-def generate_a_test_picture(Cutting_Folder, Skeleton_Folder, Picture, Stroke):
+#
+# def make_circle(ret_img, original_image, x, y, stroke_direction, p):
+#     """
+#     根据前一个坐标和当前坐标的相对关系，确定这个圆应该怎么画
+#     :param ret_img: 需要返回的图片
+#     :param original_image: 原始图片
+#     :param x: 圆心坐标
+#     :param y: 圆心坐标
+#     :param stroke_direction: 笔画坐标数组
+#     :param p: 当前笔画遍历到了哪个点
+#     :return:
+#     """
+#     # 首先确定这次笔画的方向
+#     (dir_x, dir_y) = stroke_direction[p] - stroke_direction[p - 1]
+#     """
+#         这里整理一下(dir_x, dir_y)的取值对八邻域的关系
+#         (dir_x, dir_y) == (0, 1) 或者 (0, -1) 则半径的选取为 x = 0 这条直线
+#         (dir_x, dir_y) == (1, 0) 或者 (-1, 0) 则半径的选取为 y = 0 这条直线
+#         (dir_x, dir_y) == (1, 1) 或者 (-1, -1) 则半径的选取为 y = -x 这条直线
+#         (dir_x, dir_y) == (1, -1) 或者 (-1, 1) 则半径的选取为 y = x 这条直线
+#         半径的长度如此定义 -> 沿着直线寻找两个端点，寻找最近的一个端点距离圆心的位移距离作为这个圆的半径
+#     """
+#     cv2.circle(ret_img, (x, y), radius=5, color=(0, 255, 255))
+
+
+def Stroke_Video_Generation(Cutting_Folder, Skeleton_Folder, Picture, Stroke):
     """
 
     :param Cutting_Folder: 原始图片文件夹
@@ -41,9 +220,18 @@ def generate_a_test_picture(Cutting_Folder, Skeleton_Folder, Picture, Stroke):
     :param Stroke:  对应图片短笔画
     :return:
     """
-    original_image = cv2.threshold(cv2.imread(Cutting_Folder + "/" + Picture, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)
-    skeleton_image = cv2.threshold(cv2.imread(Skeleton_Folder + "/" + Picture, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY)
-    ret_img = np.zeros(original_image.shape, np.uint8)
+    original_image = cv2.imread(Cutting_Folder + "/" + Picture, cv2.COLOR_BGR2GRAY)
+    original_image[original_image < 100] = 0
+    original_image[original_image >= 100] = 255
+    rows, cols = original_image.shape
+    template_img = np.zeros((rows, cols, 3), dtype=np.uint8)
+    template_img.fill(255)
+    # skeleton_image = cv2.imread(Skeleton_Folder + "/" + Picture, cv2.COLOR_RGB2GRAY)
+    Save_dir = "folder_for_testing"
+    Save_dir_video = "folder_for_video"
+    generate_fps(template_img, original_image, Stroke, Save_dir)
+
+
     # COLOR = [93, 194, 56]  # 染色
     # cols, rows = skeleton_image.shape
     # for A_Stroke in Stroke:
@@ -103,4 +291,4 @@ if __name__ == '__main__':
          (135, 67), (135, 66)],
         [(137, 63), (138, 62), (139, 61), (140, 60), (140, 59), (140, 58), (140, 57), (140, 56), (140, 55), (139, 54),
          (139, 53), (139, 52), (139, 51), (139, 50), (138, 49)]]
-    generate_a_test_picture(Cutting_Folder, Skeleton_Folder, Picture, Stroke)
+    Stroke_Video_Generation(Cutting_Folder, Skeleton_Folder, Picture, Stroke)
