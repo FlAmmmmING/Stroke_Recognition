@@ -11,11 +11,78 @@ import queue
 import os
 
 
-def get_radius(dir_x, dir_y, original_img, core):
+def get_radius_2(dir_x, dir_y, original_img, core, pre_radius):
+    # 备案2 —— 按照轨迹方向确定半径
+    # 这种方法较为冒险，可能会出现笔画崩溃的现象，但是它有良好的覆盖性
     """
-    确定半径大小
+
     :param dir_x: 方向
     :param dir_y: 方向
+    :param original_img: 原始图片
+    :param core: 圆心
+    :param pre_radius: 之前的半径
+    :return: 返回半径大小
+    """
+    radius_x = 0
+    radius_y = 0
+    iter_x, iter_y = core
+    # 开始计算半径
+    if dir_y == 0:
+        # 寻找 y = 0 这条线
+        # 先找左边
+        while original_img[iter_x][iter_y] == 0:
+            radius_x += 1
+            iter_y -= 1
+        iter_x, iter_y = core
+        # 再找右边
+        while original_img[iter_x][iter_y] == 0:
+            radius_y += 1
+            iter_y += 1
+    elif dir_x == 0:
+        # 寻找 x = 0 这条线
+        # 先找上边
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+        iter_x, iter_y = core
+        # 再找下边
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+    elif dir_x * dir_y == -1:
+        # 寻找 x + y = 0 这条线
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+            iter_y -= 1
+        iter_x, iter_y = core
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+            iter_y += 1
+    else:
+        # 寻找x - y = 0 这条边
+        while original_img[iter_x, iter_y] == 0:
+            radius_x += 1
+            iter_x -= 1
+            iter_y += 1
+        iter_x, iter_y = core
+        while original_img[iter_x, iter_y] == 0:
+            radius_y += 1
+            iter_x += 1
+            iter_y -= 1
+    radius = min(radius_x, radius_y)
+    # if dir_x * dir_y:
+    #     radius = round(radius * 1.4142135623730951)
+    if abs(radius - pre_radius) > 2:
+        # 判断笔画是否出现崩溃现象
+        radius = pre_radius
+    return radius
+
+
+def get_radius_1(original_img, core):
+    """
+    确定半径大小
     :param original_img: 原始图片
     :param core: 圆心坐标
     :return: 返回半径
@@ -54,82 +121,32 @@ def get_radius(dir_x, dir_y, original_img, core):
         tep_radius += 1
         iter_x -= 1
         iter_y -= 1
-    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    radius = min(radius, tep_radius)
     tep_radius = 0
     iter_x, iter_y = core
     while original_img[iter_x, iter_y] == 0:
         tep_radius += 1
         iter_x += 1
         iter_y += 1
-    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    radius = min(radius, tep_radius)
     tep_radius = 0
     iter_x, iter_y = core
     while original_img[iter_x, iter_y] == 0:
         tep_radius += 1
         iter_x -= 1
         iter_y += 1
-    radius = min(radius, round(tep_radius * 1.4142135623730951))
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    radius = min(radius, tep_radius)
     tep_radius = 0
     iter_x, iter_y = core
     while original_img[iter_x, iter_y] == 0:
         tep_radius += 1
         iter_x += 1
         iter_y -= 1
-    radius = min(radius, round(tep_radius * 1.4142135623730951))
-
-    # 备案2 —— 按照轨迹方向确定半径
-    # 这种方法较为冒险，可能会出现笔画崩溃的现象，但是它有良好的覆盖性
-    # radius_x = 0
-    # radius_y = 0
-    # iter_x, iter_y = core
-    # # 开始计算半径
-    # if dir_y == 0:
-    #     # 寻找 y = 0 这条线
-    #     # 先找左边
-    #     while original_img[iter_x][iter_y] == 0:
-    #         radius_x += 1
-    #         iter_y -= 1
-    #     iter_x, iter_y = core
-    #     # 再找右边
-    #     while original_img[iter_x][iter_y] == 0:
-    #         radius_y += 1
-    #         iter_y += 1
-    # elif dir_x == 0:
-    #     # 寻找 x = 0 这条线
-    #     # 先找上边
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_x += 1
-    #         iter_x -= 1
-    #     iter_x, iter_y = core
-    #     # 再找下边
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_y += 1
-    #         iter_x += 1
-    # elif dir_x * dir_y == -1:
-    #     # 寻找 x + y = 0 这条线
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_x += 1
-    #         iter_x -= 1
-    #         iter_y -= 1
-    #     iter_x, iter_y = core
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_y += 1
-    #         iter_x += 1
-    #         iter_y += 1
-    # else:
-    #     # 寻找x - y = 0 这条边
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_x += 1
-    #         iter_x -= 1
-    #         iter_y += 1
-    #     iter_x, iter_y = core
-    #     while original_img[iter_x, iter_y] == 0:
-    #         radius_y += 1
-    #         iter_x += 1
-    #         iter_y -= 1
-    # radius = min(radius_x, radius_y)
-    # if dir_x * dir_y:
-    #     radius = round(radius * 1.4142135623730951)
+    # radius = min(radius, round(tep_radius * 1.4142135623730951))
+    radius = min(radius, tep_radius)
     return radius
 
 
@@ -159,10 +176,13 @@ def generate_fps(template_img, original_img, Stroke, Save_dir):
     dy = [0, 0, -1, 1]
 
     for item in Stroke:
-        for i in range(1, len(item)):
+        for i in range(2, len(item) - 2):
             visit_map = np.zeros_like(original_img, dtype=bool)
-            dir_x, dir_y = item[i][0] - item[i - 1][0], item[i][1] - item[i - 1][1]
-            radius = get_radius(dir_x, dir_y, original_img, item[i])
+            if i == 2:
+                radius = get_radius_1(original_img, item[i])
+            else:
+                dir_x, dir_y = item[i][0] - item[i - 1][0], item[i][1] - item[i - 1][1]
+                radius = get_radius_2(dir_x, dir_y, original_img, item[i], radius)
             print(f"圆心：({item[i][0]}, {item[i][1]}), 半径: {radius}")
             # 开始分帧
             cnt += 1
@@ -222,7 +242,7 @@ def Generate_Video(fps_folder, video_folder):
     frames = os.listdir(fps_folder)
     frames.sort(key=lambda x: int(x.split('.')[0]))
     # 设置 帧数
-    fps = 60
+    fps = 90
     # 提取视频分辨率
     rows, cols = cv2.imread(fps_folder + "/1.jpg").shape[0], cv2.imread(fps_folder + "/1.jpg").shape[1]
     # 设置生成视频的名字
@@ -253,8 +273,8 @@ def Stroke_Video_Generation(Cutting_Folder, Picture, Stroke):
     template_img = np.zeros((rows, cols, 3), dtype=np.uint8)
     template_img.fill(255)
     # skeleton_image = cv2.imread(Skeleton_Folder + "/" + Picture, cv2.COLOR_RGB2GRAY)
-    Save_fps_dir = "folder_for_testing"
-    Save_dir_video = "folder_for_video"
+    Save_fps_dir = "../folder_for_testing"
+    Save_dir_video = "../folder_for_video"
     generate_fps(template_img, original_image, Stroke, Save_fps_dir)
     Generate_Video(Save_fps_dir, Save_dir_video)
 
@@ -269,17 +289,22 @@ def Stroke_Video_Generation(Cutting_Folder, Picture, Stroke):
 
 
 if __name__ == '__main__':
-    Cutting_Folder = "cutting"
-    Skeleton_Folder = "skeleton"
+    Cutting_Folder = "../cutting"
     Picture = "8.jpg"
 
     Stroke = [
-        [(53, 57), (53, 58), (53, 59), (53, 60), (53, 61), (53, 62), (53, 63), (52, 64), (52, 65), (53, 66), (53, 67),
-         (53, 68), (53, 69), (53, 70), (52, 71), (52, 72), (52, 73), (52, 74), (51, 75), (51, 76), (51, 77), (51, 78),
-         (51, 79), (51, 80), (51, 81), (51, 82), (51, 83), (50, 84), (50, 85), (50, 86)],
-        [(44, 93), (44, 94), (45, 95), (45, 96), (45, 97), (45, 98), (45, 99), (45, 100), (45, 101), (45, 102),
-         (45, 103), (45, 104), (45, 105), (45, 106), (44, 107), (44, 108), (44, 109), (45, 110), (45, 111), (45, 112),
-         (45, 113), (45, 114)],
+        # [(53, 57), (53, 58), (53, 59), (53, 60), (53, 61), (53, 62), (53, 63), (52, 64), (52, 65), (53, 66), (53, 67),
+        #  (53, 68), (53, 69), (53, 70), (52, 71), (52, 72), (52, 73), (52, 74), (51, 75), (51, 76), (51, 77), (51, 78),
+        #  (51, 79), (51, 80), (51, 81), (51, 82), (51, 83), (50, 84), (50, 85), (50, 86)],
+        # [(44, 93), (44, 94), (45, 95), (45, 96), (45, 97), (45, 98), (45, 99), (45, 100), (45, 101), (45, 102),
+        #  (45, 103), (45, 104), (45, 105), (45, 106), (44, 107), (44, 108), (44, 109), (45, 110), (45, 111), (45, 112),
+        #  (45, 113), (45, 114)],
+        [(53, 57), (53, 58), (53, 59), (53, 60), (52, 61), (52, 62), (52, 63), (52, 64), (52, 65), (52, 66), (52, 67),
+         (51, 68), (51, 69), (51, 70), (51, 71), (51, 72), (51, 73), (51, 74), (50, 75), (50, 76), (50, 77), (50, 78),
+         (50, 79), (50, 80), (50, 81), (49, 82), (49, 83), (49, 84), (49, 85), (49, 86), (49, 87), (49, 88), (49, 89),
+         (48, 90), (48, 91), (48, 92), (48, 93), (48, 94), (48, 95), (48, 96), (47, 97), (47, 98), (47, 99), (47, 100),
+         (47, 101), (47, 102), (47, 103), (46, 104), (46, 105), (46, 106), (46, 107), (46, 108), (46, 109), (46, 110),
+         (45, 111), (45, 112), (45, 113), (45, 114)],
         [(3, 77), (4, 78), (5, 79), (6, 80), (6, 81), (7, 82), (8, 83), (9, 84), (10, 85), (11, 86), (12, 87), (13, 88),
          (14, 88), (15, 89), (16, 89), (17, 90), (18, 90), (19, 90), (20, 90), (21, 90), (22, 90), (23, 90), (24, 90),
          (25, 90), (26, 90), (27, 90), (28, 90), (29, 90), (30, 90), (31, 90), (32, 90), (33, 90), (34, 90), (35, 90),
@@ -320,7 +345,4 @@ if __name__ == '__main__':
          (130, 127), (131, 127), (132, 128), (133, 128), (134, 129), (135, 129), (136, 130), (137, 130), (138, 130)]]
 
     Stroke_Video_Generation(Cutting_Folder, Picture, Stroke)
-
-Correct_Stroke = [[
-
-]]
+    

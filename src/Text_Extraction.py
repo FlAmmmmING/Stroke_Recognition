@@ -91,6 +91,6 @@ def Cutting(path, acc):
 
 
 if __name__ == '__main__':
-    path = "writing.jpg"  # 用来存放输入的图像
+    path = "../writing.jpg"  # 用来存放输入的图像
     Cutting(path, 50)
     

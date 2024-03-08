@@ -130,11 +130,12 @@ def Repetition_2(folder, name):
     Repetition 2
     :param folder: folder path
     :param name: name of image
-    :return:
+    :return: 返回短笔画路径, 笔画路径是一连串的像素坐标位置
     """
     pn = name
-    ret, skeleton_image = cv2.threshold(cv2.imread(folder + "/" + pn, cv2.IMREAD_GRAYSCALE), 0, 255,
-                                        cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    skeleton_image = cv2.imread(folder + "/" + pn, cv2.IMREAD_GRAYSCALE)
+    skeleton_image[skeleton_image >= 100] = 255
+    skeleton_image[skeleton_image < 100] = 0
     # cv2.imshow("Skeleton Image", skeleton_image)
     # cv2.waitKey(0)
 
@@ -153,9 +154,10 @@ def Repetition_2(folder, name):
 
     cv2.imshow("new image", stroke_picture)
     cv2.waitKey(0)
+    return short_stroke
 
 
 if __name__ == '__main__':
-    picture_folder = "Skeleton"
+    picture_folder = "../Skeleton"
     picture_name = "8.jpg"
     Repetition_2(picture_folder, picture_name)

@@ -49,5 +49,5 @@ Thumbs.db
 /mvnw
 
 *.csv
-code_example.txt
-test.py
+src/code_example.txt
+src/test.py
