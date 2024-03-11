@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <title>MORKER-登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+        }
+        .container {
+            height: 100%;
+            background-image: linear-gradient(to right,  #ffffff, #cdacff);
+        }
+        .login-wrapper {
+            background-color: #fff;
+            width: 358px;
+            height: 588px;
+            border-radius: 15px;
+            padding: 0 50px;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .header {
+            font-size: 38px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 10px;
+            border-bottom: 1px solid rgb(128, 125, 125);
+            font-size: 15px;
+            outline: none;
+        }
+        input::placeholder {
+            text-transform: uppercase;
+        }
+        .msg {
+            text-align: center;
+            line-height: 88px;
+        }
+        a {
+            text-decoration-line: none;
+            color: #abc1ee;
+        }
+        .btn {
+            text-align: center;
+            padding: 10px;
+            font-size: 25px;
+            height: 50px;
+            width: 100%;
+            margin-top: 40px;
+            background-image: linear-gradient(to right, #2067e3, #fbc2eb);
+            color: #fff;
+        }
+        .btn:hover {
+            background-image: linear-gradient(to left, #0049ff, #f800b1);
+        }
+        .signup_success {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #80ce6e, #1169d7);
+            color: #fff;
+        }
+        .signup_found_no_user {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #9f15c7, #0c16dc);
+            color: #fff;
+        }
+        .signup_wrong_password {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #ffd200, #dc0c0c);
+            color: #fff;
+        }
+    </style>
+</head>
+{% import "bootstrap/wtf.html" as wtf %}
+<body>
+    {% if get_flashed_messages()[0] == '注册成功！请登录' %}
+             <button type="button" class="signup_success" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    {% endif %}
+    {% if get_flashed_messages()[0] == '不存在该用户！' %}
+             <button type="button" class="signup_found_no_user" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    {% endif %}
+    {% if get_flashed_messages()[0] == '密码错误！' %}
+             <button type="button" class="signup_wrong_password" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    {% endif %}
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="header">登录墨客</div>
+<!--            <div class="form-wrapper">-->
+<!--&lt;!&ndash;                <form action="longin.html" method="POST">&ndash;&gt;-->
+<!--                    <input type="text" name="username" placeholder="用户名" class="input-item">-->
+<!--                    <input type="password" name="password" placeholder="密码" class="input-item">-->
+<!--                    <a href="/"><button class="btn-login">登录</button></a>-->
+<!--&lt;!&ndash;                </form>&ndash;&gt;-->
+<!--            </div>-->
+                {{ wtf.quick_form(form) }}
+
+            <div class="msg">
+                尚未拥有账户？
+                <a href="/signup">点击此注册</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

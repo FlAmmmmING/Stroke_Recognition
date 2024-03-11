@@ -273,8 +273,8 @@ def Stroke_Video_Generation(Cutting_Folder, Picture, Stroke):
     template_img = np.zeros((rows, cols, 3), dtype=np.uint8)
     template_img.fill(255)
     # skeleton_image = cv2.imread(Skeleton_Folder + "/" + Picture, cv2.COLOR_RGB2GRAY)
-    Save_fps_dir = "../folder_for_testing"
-    Save_dir_video = "../folder_for_video"
+    Save_fps_dir = "../data/folder_for_testing"
+    Save_dir_video = "../data/folder_for_video"
     generate_fps(template_img, original_image, Stroke, Save_fps_dir)
     Generate_Video(Save_fps_dir, Save_dir_video)
 

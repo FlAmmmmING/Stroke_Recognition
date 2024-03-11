@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORKER-开始！</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+</head>
+
+<body>
+<div class="top-head">
+    <ul class="left-entry">
+        <li class="v-popover-wrap"><a href="/"><img
+                src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                style="margin-top: 10px; margin-left: 10px;"></a></li>
+        <li class="v-popover-wrap"><span><a href="/Stroke">立即体验</a></span></li>
+        {#
+        <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
+        #}
+        <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
+    </ul>
+</div>
+<div class="searchingpage" style="height: 1200px;">
+    <br><br><br><br>
+    <div class="title">您可以在这里投递作品</div>
+    <div class="write" style="font-size: 20px;">请认真填写联系方式，以便作品审核后第一时间通知您</div>
+    <br><br>
+    <hr class="line">
+    <br><br>
+    <form>
+        <table class="write">
+            <tbody>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">投递作者：<input type="text" name="1"></p><br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">邮&nbsp&nbsp箱：<input type="text" name="1"></p><br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">电&nbsp&nbsp话：<input type="text" name="1"></p><br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">&nbspGithub：<input type="text" name="1"></p><br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">请选择您的作品种类：&nbsp&nbsp转载&nbsp<input type="radio" name="1"
+                                                                                            style="height:15px; width:20px">&nbsp&nbsp&nbsp自制&nbsp<input
+                            type="radio" name="1"
+                            style="height:15px; width:20px"></p>
+                    <br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    <p style="font-size: 20px">请上传您的作品：<input type="file" name="1"></p><br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                    您可以在这里介绍您的作品<br><br>
+                    <p style="font-size: 20px"><textarea name="1"
+                                                         style="width: 500px; height: 300px; resize: none"></textarea>
+                    </p>
+                    <br><br>
+                </tr>
+            </th>
+            <th>
+                <tr>
+                            <span style="font-size: 20px"><input type="submit" style="width: 100px; height:30px"
+                                                                 name="1" value="确定"
+                                                                 onclick="javascript:alert('上传成功');"></span>
+                    &nbsp&nbsp&nbsp&nbsp
+                    <span style="font-size: 20px"><input type="reset" style="width: 100px; height:30px" name="1"
+                                                         value="取消"></span><br><br>
+                </tr>
+            </th>
+            </tbody>
+        </table>
+    </form>
+</div>
+</body>
+</html>

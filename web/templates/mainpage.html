@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORKER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+</head>
+
+<body>
+    <!-- 网页页头 -->
+    <div class="box1">
+        <div class="top-head">
+            <ul class="left-entry">
+                <li class="v-popover-wrap"><a href="/"><img
+                        src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                        style="margin-top: 10px; margin-left: 10px;"></a></li>
+                <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
+{#                <li class="v-popover-wrap"><span><a href="">登录</a></span></li>#}
+                <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
+            </ul>
+        </div>
+    </div>
+    <!-- 网页内容 -->
+    <div class="body-container">
+        <div class="picture">
+            <ul>
+                <li id="introduction">
+                    <div>
+                        <div class="title"><a href="/">
+                            墨客：我们致力于弘扬中华传统文化</a>
+                        </div>
+                        <br>
+                        <div class="Sponsor">Sponsor: Weijie Jiang. 202110310195@shmtu.edu.cn</div>
+                        <br><br><br><br>
+                        <div class="write">&nbsp&nbsp&nbsp&nbsp&nbsp书法是中华文化的瑰宝</div>
+                        <br>
+                        <div class="write">
+                            &nbsp&nbsp&nbsp&nbsp我们希望墨客的诞生能让更多人认识<strong>书法</strong>
+                        </div>
+                        <br>
+                        <div class="write">
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加入我们！去<strong><a href="/contact">追寻</a></strong>他们的存在！
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="con">
+                        <div id="slideshow1">
+                            <img class="active" src="{{ url_for('static', filename='imgs/source/cycle/Chinese.jpg') }}"
+                                 width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/Gaze.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/girl.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/inthesnow.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/landscape.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/oridesilent.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/starriver.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/sunset.jpg') }}" width="500"/>
+                        </div>
+                        <div id="slideshow2">
+                            <img class="active" src="{{ url_for('static', filename='imgs/source/cycle/Chinese.jpg') }}"
+                                 width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/Gaze.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/girl.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/inthesnow.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/landscape.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/oridesilent.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/starriver.jpg') }}" width="500"/>
+                            <img src="{{ url_for('static', filename='imgs/source/cycle/sunset.jpg') }}" width="500"/>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="box2"></div>
+    <div class="in">
+        <ul>
+            <li>
+                <img class="position1" src="{{ url_for('static', filename='gif/res_video.gif') }}" width="600"/></video>
+            </li>
+            <li>
+                <div class="write position2">
+                    <div class="title">墨客：书法教育者的辅助伙伴</div><br>
+                    如果您是一位书法教育者，您可以使用墨客提供的功能线上完成书法作品的笔画生成制作。<br>
+                    您要做的就是上传书法作品图片，修改文字生成骨架，即可获取最终成品。
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="box3">
+        <div class="in">
+            <ul>
+                <li>
+                    <div class="write position3">
+                        <div class="title">想要书法书写的艺术视频？找墨客帮忙！</div><br>
+                        如果您的美化工作需要用到书法作品笔画视频，墨客提供了这样的平台。
+                    </div>
+                    <div>
+                        <a  href="/login"><button class=" btn button-position-mainpage">立即体验</button></a>
+                    </div>
+                </li>
+                <li>
+                    <div class="position4"><img src="{{ url_for('static', filename='imgs/source/cycle/Gaze.jpg') }}" width="650"/></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        // 轮播代码
+        function slideshow(S) {
+            var slideshow = document.getElementById(S),
+                imgs = slideshow.getElementsByTagName("img"), //得到图片们
+                index = 0; //current为当前活跃的图片编号
+            function slideOff() {
+                imgs[index].className = ""; //图片淡出
+            }
+
+            function slideOn() {
+                imgs[index].className = "active"; //图片淡入
+            }
+
+            function changeSlide() { //切换图片的函数
+                slideOff();
+                index++; //自增1
+                if (index >= imgs.length) index = 0;
+                slideOn();
+            }
+
+            //每2s调用changeSlide函数进行图片轮播
+            var slideon = setInterval(changeSlide, 5000);
+        }
+
+        slideshow("slideshow1");
+        slideshow("slideshow2");
+    </script>
+</body>
+</html>
