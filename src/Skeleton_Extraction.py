@@ -56,7 +56,7 @@ def Cavity_Deal(img):
     return res
 
 
-def Skeleton_Extraction(path, threshold_point, photo):
+def Skeleton_Extraction(path, save_dir, threshold_point, photo):
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -74,7 +74,7 @@ def Skeleton_Extraction(path, threshold_point, photo):
     resMatrix *= 255
     # 处理空洞算法
     Pretreatment_Image = Cavity_Deal(img=resMatrix)
-    cv2.imwrite(f'Pretreatment_Image/{photo}.jpg', Pretreatment_Image)
+    cv2.imwrite(f'../data/Pretreatment_Image/{photo}.jpg', Pretreatment_Image)
     # 细化算法实现
     # ZS细化算法得到初步骨架
     changing1 = changing2 = [(-1, -1)]
@@ -128,13 +128,14 @@ def Skeleton_Extraction(path, threshold_point, photo):
                     cnt += 1
 
     # cv2.imshow("1", Pretreatment_Image)
-    cv2.imwrite(f'Skeleton/{photo}.jpg', Pretreatment_Image)
+    cv2.imwrite(save_dir, Pretreatment_Image)
     print(photo)
     # cv2.waitKey(0)
 
 
 if __name__ == '__main__':
     for photo in range(0, 15):
-        path = f"./cutting/{photo}.jpg"
+        path = f"../data/cutting/{photo}.jpg"
+        save_dir = f"../data/Skeleton/{photo}.jpg"
         # threshold_point：是过滤掉连通域大小小于threshold_point，后期设计上可以追加一个用户自适应过滤机制
-        Skeleton_Extraction(path, 100, photo)
+        Skeleton_Extraction(path, save_dir, 20, photo)

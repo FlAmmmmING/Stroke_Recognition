@@ -1,10 +1,18 @@
+from datetime import datetime
+
+import cv2
+import numpy as np
+
+from src import Back_End
 from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from wtforms import StringField, PasswordField, SubmitField  # 表单类型
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from wtforms.validators import DataRequired, Email, EqualTo  # 验证数据不能为空
 from flask_bootstrap import Bootstrap
+import time
 
 """"""""""""""""""""""""
 """ 这里是初始化的代码 """
@@ -58,11 +66,19 @@ db = SQLAlchemy(app)
 
 # 模型 1 创建了customer数据库
 class Customer(db.Model):
-    __tablename__ = 'customer'
-    # 主键, ID 自动增长
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
+    __tablename__ = 'Customer'
+    username = db.Column(db.String(255), primary_key=True, unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+
+
+# 模型2 创建提交图片表格
+class PictureSet(db.Model):
+    __tablename__ = 'PictureSet'
+    pk = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    username = db.Column(db.String(255), nullable=False)
+    Picture = db.Column(db.PickleType, nullable=False)
+    PictureName = db.Column(db.String(255), nullable=False)
+    CreateTime = db.Column(db.DateTime, nullable=False)
 
 
 """"""""""""""""""""""""
@@ -103,7 +119,7 @@ def login():
             true_password = Customer.query.filter_by(username=username).first().password
             if password == true_password:
                 # 登录成功
-                return redirect(url_for('Stroke', customer=username))
+                return redirect(url_for('Stroke', username=username))
             else:
                 flash("密码错误！")
                 db.session.rollback()
@@ -159,9 +175,45 @@ def signup():
 
 
 # 主要功能
-@app.route('/Stroke<customer>')
-def Stroke(customer):
-    return render_template('Stroke.html')
+# 这里显示的是允许上传的图片类型，这里我们初步只支持jpg格式的图片文件
+class Submit_Picture(FlaskForm):
+    PictureName = StringField(label='图片名称', validators=[DataRequired("请输入作品名称!")])
+    SubmitPicture = FileField(label='请上传书法作品jpg图片', validators=[FileAllowed(['jpg'])])
+    submit = SubmitField(label='提交')
+
+
+@app.route('/Stroke/<username>', methods=['GET', 'POST'])
+def Stroke(username):
+    form = Submit_Picture()
+    if request.method == 'POST':
+        PictureName = request.form['PictureName']
+        Picture = request.files['SubmitPicture']
+        # Back_End.imgbytes2cv(Picture)
+        Time = time.localtime()
+        CreateTime = time.strftime("%Y-%m-%d %H:%M:%S", Time)
+        # print(DataTime)
+        if Picture:
+            is_Exist_Same_Name = PictureSet.query.filter_by(username=username, PictureName=PictureName).count()
+            if is_Exist_Same_Name == 0:
+                try:
+                    new_picture = PictureSet(username=username, Picture=Picture, PictureName=PictureName,
+                                             CreateTime=CreateTime)
+                    db.session.add(new_picture)
+                    db.session.commit()
+                    flash('上传成功！')
+                    # 图片上传至后端
+                    Back_End.imgbytes2cv(Picture)
+                except:
+                    flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
+                    db.session.rollback()
+            else:
+                flash('有相同名字的图片！')
+                db.session.rollback()
+        else:
+            flash('请上传图片！')
+    # if request.method == 'POST':
+
+    return render_template('Stroke.html', form=form, username=username)
 
 
 """"""""""""""""""""""""
@@ -173,6 +225,16 @@ def Stroke(customer):
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+
+""""""""""""""""""""""""
+""" 这里是存放历史的代码 """
+""""""""""""""""""""""""
+
+
+@app.route(f'/history/<username>')
+def history(username):
+    return render_template('history.html', username=username)
 
 
 """"""""""""""""""""""""

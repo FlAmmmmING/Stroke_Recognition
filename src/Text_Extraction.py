@@ -1,10 +1,10 @@
 # 这个文件用来分割书法字贴的文字
 import cv2
-
+from PIL import Image
 
 # 先竖着切，再横着切
 # acc 是分割广度
-def Cutting(path, acc):
+def Cutting(path, save_dir, acc, resize):
     # 读取图像，二值化图像
     img = cv2.imread(path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -81,7 +81,8 @@ def Cutting(path, acc):
                 if p1 == rows:
                     p1 -= 1
                 cropped = data[max(0, p0 - 1): min(rows - 1, p1 + 1), 0:cols]
-                cv2.imwrite(f"./cutting/{cnt}.jpg", cropped)
+                cropped = cv2.resize(cropped, (resize, resize), interpolation=cv2.INTER_CUBIC)
+                cv2.imwrite(f"{save_dir}/{cnt}.jpg", cropped)
                 cnt += 1
                 p0 = p1 + 1
                 cv2.imshow("c", cropped)
@@ -92,5 +93,6 @@ def Cutting(path, acc):
 
 if __name__ == '__main__':
     path = "../writing.jpg"  # 用来存放输入的图像
-    Cutting(path, 50)
+    save_dir = "../data/cutting"
+    Cutting(path, save_dir, 50, 100)
     
