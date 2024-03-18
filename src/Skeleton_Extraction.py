@@ -138,4 +138,4 @@ if __name__ == '__main__':
         path = f"../data/cutting/{photo}.jpg"
         save_dir = f"../data/Skeleton/{photo}.jpg"
         # threshold_point：是过滤掉连通域大小小于threshold_point，后期设计上可以追加一个用户自适应过滤机制
-        Skeleton_Extraction(path, save_dir, 20, photo)
+        Skeleton_Extraction(path, save_dir, 16, photo)

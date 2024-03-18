@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+
+    <body>
+        <canvas id="c1">
+            当前canvas不支持
+            <a href="https://www.google.cn/intl/zh-CN/chrome/">立即下载</a>
+        </canvas>
+        <script>
+            // // pair 存储当前笔画
+            // class pair {
+            //
+            // }
+            // 80 * 80 的像素点map，在初始状态下，我们需要导入后台的短笔画
+            let map = Array(80).fill().map(() => Array(80));
+            let canvas = document.getElementById("c1");
+            let ctx = canvas.getContext("2d");
+            window.onload = function() {
+                canvas.width = 800;
+                canvas.height = 800;
+                init();
+                // 添加事件
+                canvas.addEventListener("click", detect);
+                // apixel = {
+                //
+                // }
+            }
+            function init() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < 80; i++) {
+                    for (let j = 0; j < 80; j++) {
+                        ctx.beginPath();
+                        ctx.rect(10 * i, 10 * j, 10, 10);
+                        if (map[i][j]) {
+                            // 如果是笔画
+                            ctx.fillStyle = "#a300ff";
+                        }
+                        else {
+                            ctx.fillStyle = '#ffd373';
+                        }
+                        ctx.fill();
+                    }
+                }
+            }
+            function draw(x, y) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                map[Math.floor(x / 10)][Math.floor(y / 10)] ^= 1;
+                for (let i = 0; i < 80; i++) {
+                    for (let j = 0; j < 80; j++) {
+                        ctx.beginPath();
+                        ctx.rect(10 * i, 10 * j, 10, 10);
+                        if (map[i][j]) {
+                            // 如果是笔画
+                            ctx.fillStyle = "#a300ff";
+                        }
+                        else {
+                            ctx.fillStyle = '#ffd373';
+                        }
+                        ctx.fill();
+                    }
+                }
+            }
+            // 获取鼠标位置函数，用来触发事件
+            function detect(event) {
+                // 鼠标点击，获取(x, y)位置
+                let x = event.clientX - canvas.getBoundingClientRect().left;
+                let y = event.clientY- canvas.getBoundingClientRect().top;
+                draw(x, y);
+            }
+        </script>
+    </body>
+
+</html>

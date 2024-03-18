@@ -94,5 +94,5 @@ def Cutting(path, save_dir, acc, resize):
 if __name__ == '__main__':
     path = "../writing.jpg"  # 用来存放输入的图像
     save_dir = "../data/cutting"
-    Cutting(path, save_dir, 50, 100)
+    Cutting(path, save_dir, 50, 80)
     

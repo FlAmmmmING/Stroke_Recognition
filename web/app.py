@@ -14,6 +14,7 @@ from wtforms.validators import DataRequired, Email, EqualTo  # 验证数据不�
 from flask_bootstrap import Bootstrap
 import time
 
+
 """"""""""""""""""""""""
 """ 这里是初始化的代码 """
 """"""""""""""""""""""""
@@ -202,7 +203,7 @@ def Stroke(username):
                     db.session.commit()
                     flash('上传成功！')
                     # 图片上传至后端
-                    Back_End.imgbytes2cv(Picture)
+                    Back_End.start_project(Picture, username, PictureName)
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
                     db.session.rollback()
