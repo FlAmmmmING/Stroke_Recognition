@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORKER-开始！</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <style>
+        input {
+            /*display: block;*/
+            width: 100%;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 5px;
+            /*border-bottom: 1px solid rgb(128, 125, 125);*/
+            font-size: 15px;
+            /*outline: none;*/
+        }
+
+        input::placeholder {
+            text-transform: uppercase;
+        }
+
+        .btn {
+            text-align: center;
+            padding: 10px;
+            font-size: 25px;
+            height: 50px;
+            width: 100%;
+            margin-top: 40px;
+            background-image: linear-gradient(to right, #b920e3, #d94721);
+            color: #fff;
+        }
+
+        .btn:hover {
+            background-image: linear-gradient(to left, #ffd926, #275ce1);
+        }
+
+        .signup_success {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #80ce6e, #1169d7);
+            color: #fff;
+        }
+
+        .signup_found_no_user {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #9f15c7, #0c16dc);
+            color: #fff;
+        }
+
+        .signup_wrong_password {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #ffd200, #dc0c0c);
+            color: #fff;
+        }
+
+        .SubmitPicture {
+            font-size: 25px;
+        }
+    </style>
+</head>
+{% import "bootstrap/wtf.html" as wtf %}
+<body>
+<div class="top-head">
+    <ul class="left-entry">
+        <li class="v-popover-wrap"><a href="/"><img
+                src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                style="margin-top: 10px; margin-left: 10px;"></a></li>
+        <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
+        {#
+        <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
+        #}
+        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">我的历史</a></span></li>
+    </ul>
+</div>
+<div class="diygpage" style="height: 100%;">
+    <br><br><br><br><br><br>
+    <div>这里是您刚刚上传的书法作品的文字，您可以点击它然后在下方画板上编辑</div>
+    <br>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <img src="{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}"/>
+    <br>
+    <h2 class="line-diy"></h2>
+    <canvas id="c1">
+        当前canvas不支持
+        <a href="https://www.google.cn/intl/zh-CN/chrome/">立即下载</a>
+    </canvas>
+    <script>
+        const N = 100
+        const pixel_size = 8
+        // // pair 存储当前笔画
+        // class pair {
+        //
+        // }
+        // 100 * 100 的像素点map，在初始状态下，我们需要导入后台的短笔画
+        let map = Array(N).fill().map(() => Array(N));
+        let canvas = document.getElementById("c1");
+        let ctx = canvas.getContext("2d");
+        window.onload = function () {
+            canvas.width = N * pixel_size;
+            canvas.height = N * pixel_size;
+            init();
+            // 添加事件
+            canvas.addEventListener("click", detect);
+            // apixel = {
+            //
+            // }
+        }
+
+        function init() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < N; i++) {
+                for (let j = 0; j < N; j++) {
+                    ctx.beginPath();
+                    ctx.rect(pixel_size * i, pixel_size * j, pixel_size, pixel_size);
+                    if (map[i][j]) {
+                        // 如果是笔画
+                        ctx.fillStyle = "#000000";
+                    } else {
+                        ctx.fillStyle = '#7f8388';
+                    }
+                    ctx.fill();
+                }
+            }
+        }
+
+        function draw(x, y) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] ^= 1;
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 100; j++) {
+                    ctx.beginPath();
+                    ctx.rect(pixel_size * i, pixel_size * j, pixel_size, pixel_size);
+                    if (map[i][j]) {
+                        // 如果是笔画
+                        ctx.fillStyle = "#000000";
+                    } else {
+                        ctx.fillStyle = '#7f8388';
+                    }
+                    ctx.fill();
+                }
+            }
+        }
+
+        // 获取鼠标位置函数，用来触发事件
+        function detect(event) {
+            // 鼠标点击，获取(x, y)位置
+            let x = event.clientX - canvas.getBoundingClientRect().left;
+            let y = event.clientY - canvas.getBoundingClientRect().top;
+            draw(x, y);
+        }
+    </script>
+
+
+</div>
+</body>
+</html>
