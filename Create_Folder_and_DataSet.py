@@ -15,11 +15,10 @@ def start_creating(username, PictureName, Picture):
     """
     print(PictureName)
     # 以后这个用户的作品就存放在这里
-    base_path = f'data/{username}'
+    base_path = f'static/data/{username}'
     if os.path.exists(base_path):
         shutil.rmtree(base_path)
-    if os.path.exists("static/Temp_Skeleton"):
-        shutil.rmtree("static/Temp_Skeleton")
+
     os.mkdir(base_path)
     # 作品的原始图片都放在这里
     os.mkdir(base_path + "/Original")
@@ -35,8 +34,6 @@ def start_creating(username, PictureName, Picture):
     os.mkdir(base_path + "/Video")
     # 将图片插入进去
     cv2.imwrite(base_path + f"/Original/{PictureName}.jpg", Picture)
-    # 将图片显示在前端的临时文件夹
-    os.mkdir("static/Temp_Skeleton")
 
     # 先将文字分割
     Text_Extraction.Cutting(base_path + f"/Original/{PictureName}.jpg", base_path + "/Cutting", 10, 100)

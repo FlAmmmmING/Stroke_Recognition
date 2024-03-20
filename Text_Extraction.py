@@ -17,11 +17,15 @@ def Cutting(path, save_dir, acc_percent, resize):
     img = cv2.imread(path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)
+
+    # 用户可以选择白底黑字还是黑底白字
+    # img = 255 - img
+
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
     rows = img.shape[0]
     cols = img.shape[1]
-    acc = min(rows, cols) * acc_percent * 0.01
+    acc = max(rows, cols) * acc_percent * 0.01
     # print(acc)
     # print(rows)
     # print(cols)
@@ -92,7 +96,7 @@ def Cutting(path, save_dir, acc_percent, resize):
                 if p1 == rows:
                     p1 -= 1
                 cropped = data[max(0, p0 - 1): min(rows - 1, p1 + 1), 0:cols]
-                cropped = cv2.resize(cropped, (resize - 1, resize - 1), interpolation=cv2.INTER_CUBIC)
+                cropped = cv2.resize(cropped, (resize - 2, resize - 2), interpolation=cv2.INTER_CUBIC)
                 # 边缘填充，防止笔画直接和边界触碰
                 cropped = np.pad(cropped, (1, 1), 'constant', constant_values=255)
                 cv2.imwrite(f"{save_dir}/{cnt}.jpg", cropped)

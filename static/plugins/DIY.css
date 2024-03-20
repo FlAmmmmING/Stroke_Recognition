@@ -1,0 +1,173 @@
+
+.diypage {
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff97;
+    text-align: center;
+    margin: auto;
+    /*div水平居中*/
+}
+
+input {
+    /*display: block;*/
+    width: 100%;
+    margin-bottom: 20px;
+    border: 0;
+    padding: 5px;
+    /*border-bottom: 1px solid rgb(128, 125, 125);*/
+    font-size: 15px;
+    /*outline: none;*/
+}
+
+input::placeholder {
+    text-transform: uppercase;
+}
+
+.btn {
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+    height: 50px;
+    width: 100%;
+    margin-top: 40px;
+    background-image: linear-gradient(to right, #000000, #ffffff);
+    color: #fff;
+}
+
+.btn:hover {
+    background-image: linear-gradient(to left, #ffd926, #275ce1);
+}
+
+.signup_success {
+    text-align: center;
+    font-size: 10px;
+    height: 30px;
+    width: 100%;
+    background-image: linear-gradient(to right, #80ce6e, #1169d7);
+    color: #fff;
+}
+
+.signup_found_no_user {
+    text-align: center;
+    font-size: 10px;
+    height: 30px;
+    width: 100%;
+    background-image: linear-gradient(to right, #9f15c7, #0c16dc);
+    color: #fff;
+}
+
+.signup_wrong_password {
+    text-align: center;
+    font-size: 10px;
+    height: 30px;
+    width: 100%;
+    background-image: linear-gradient(to right, #ffd200, #dc0c0c);
+    color: #fff;
+}
+
+.SubmitPicture {
+    font-size: 25px;
+}
+
+.edit-picture {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.edit-picture:hover {
+    transform: scale(1.1);
+}
+
+.edit-picture:focus {
+    transform: scale(1.1);
+}
+
+.canvas_box {
+    width: 1000px;
+    height: 1000px;
+    margin-left: 50px;
+}
+
+.canvas_position {
+    height: 800px;
+    width: 800px;
+    /*border: 5px solid black; !* 画布边框样式 *!*/
+    position: absolute; /* 设置绝对定位 */
+    left: 50px; /* 相对于父元素最左边的位置 */
+    top: 200px;
+}
+
+.canvas_operation {
+    position: absolute;
+    /*border: 5px solid black; !* 画布边框样式 *!*/
+    width: 500px;
+    height: 800px;
+    left: 1000px;
+    top: 200px;
+}
+
+.ul-style {
+    user-select: none;
+    position: absolute;
+    /*border: 5px solid #de0000; !* 画布边框样式 *!*/
+    width: 500px;
+    height: auto;
+    margin-top: 150px;
+    left: 0;
+    place-items: center;
+}
+
+.ul-style2 {
+    user-select: none;
+    position: absolute;
+    /*border: 5px solid #de0000; !* 画布边框样式 *!*/
+    width: 400px;
+    height: auto;
+    margin-top: 250px;
+    left: 50px;
+    place-items: center;
+}
+
+.ul-style3 {
+    user-select: none;
+    position: absolute;
+    /*border: 5px solid #de0000; !* 画布边框样式 *!*/
+    width: 400px;
+    height: auto;
+    margin-top: 350px;
+    left: 50px;
+    place-items: center;
+}
+
+.ul-style4 {
+    user-select: none;
+    position: absolute;
+    /*border: 5px solid #de0000; !* 画布边框样式 *!*/
+    width: 400px;
+    height: auto;
+    margin-top: 450px;
+    left: 50px;
+    place-items: center;
+}
+
+.writing-style1 {
+    user-select: none;
+    position: absolute;
+    margin-top: 40px;
+    font-size: 30px;
+    width: 500px;
+    height: auto;
+    place-items: center;
+}
+
+.writing-style2 {
+    user-select: none;
+    position: absolute;
+    margin-top: 230px;
+    font-size: 30px;
+    width: 500px;
+    height: auto;
+    place-items: center;
+}

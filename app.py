@@ -1,3 +1,4 @@
+import csv
 import os
 from datetime import datetime
 
@@ -19,7 +20,7 @@ import time
 """ 这里是初始化的代码 """
 """"""""""""""""""""""""
 
-app = Flask(__name__, template_folder='templates', static_url_path='/')
+app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/')
 app.config["SECRET_KEY"] = "123456"
 bootstrap = Bootstrap(app)
 
@@ -43,8 +44,8 @@ app.config[
 
 db = SQLAlchemy(app)
 
-# 临时文件保存地址
-temp_data = "../../data"
+# basedir
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 """"""""""""""""""""""""
 """ 这里是测试的代码 """
@@ -204,6 +205,7 @@ def Stroke(username):
                     db.session.commit()
                     flash('上传成功！请耐心等待！')
                     # 图片上传至后端
+                    # 返回 ret_map
                     Back_End.start_project(Picture, username, PictureName)
                     return redirect(url_for('DIY', username=username))
                 except:
@@ -226,7 +228,18 @@ def Stroke(username):
 
 @app.route('/Stroke/DIY/<username>', methods=['GET', 'POST'])
 def DIY(username):
-    return render_template('DIY.html', username=username)
+    # print(basedir)
+    picture_folder = f'static/data/{username}/Short_Skeleton'
+    picture_path = os.listdir(picture_folder)
+    picture_number = len(picture_path)
+    print(picture_number)
+    with open(f'static/data/{username}/Short_Skeleton_data.csv', "r") as f:
+        reader = csv.reader(f)
+        # ret_map = csv.reader(f)
+        ret_map = np.array(list(reader)).astype("int")
+    ret_map = ret_map.reshape(-1)
+    # print(type(ret_map))
+    return render_template('DIY.html', username=username, picture_folder=picture_folder, picture_number=picture_number, pitcure_path=picture_path, Stroke_Map=ret_map)
 
 
 """"""""""""""""""""""""

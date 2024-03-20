@@ -5,6 +5,7 @@ import queue
 
 import cv2
 import numpy as np
+import csv
 
 # 我需要干什么？
 # 1. 判断交点，将交点删去，之后剩下的非联通区域就是短笔画
@@ -77,7 +78,7 @@ def Repetition(skeleton_path, cutting_path, save_path, picture_name):
     :param cutting_path: 原剪切图路径
     :param save_path: 保存路径
     :param picture_name: 图片名称
-    :return:
+    :return: 返回这个图片的map骨架图
     """
     skeleton_image = cv2.imread(skeleton_path + f'/{picture_name}.jpg', cv2.IMREAD_GRAYSCALE)
     original_image = cv2.imread(cutting_path + f'/{picture_name}.jpg', cv2.IMREAD_GRAYSCALE)
@@ -85,9 +86,9 @@ def Repetition(skeleton_path, cutting_path, save_path, picture_name):
     skeleton_image[skeleton_image < 100] = 0
     original_image[original_image >= 100] = 255
     original_image[original_image < 100] = 0
+    print(f"t + {skeleton_image.shape}")
     # cv2.imshow("Skeleton Image", skeleton_image)
     # cv2.waitKey(0)
-
     Looking_for_Intersection_Point(skeleton_image)
     # 返回短笔画集合
     # short_stroke = Looking_for_Short_Stroke(skeleton_image)
@@ -111,10 +112,9 @@ def Repetition(skeleton_path, cutting_path, save_path, picture_name):
         # stroke_num += 1
 
     cv2.imwrite(save_path + f'/{picture_name}.jpg', stroke_picture)
-    cv2.imwrite(f'static/Temp_Skeleton/{picture_name}.jpg', stroke_picture)
     # cv2.imshow("new image", stroke_picture)
     # cv2.waitKey(0)
-
+    return stroke_picture
     # return short_stroke
 
 
@@ -124,18 +124,40 @@ def start_stroke_repetition(skeleton_path, cutting_path, save_path):
     :param skeleton_path: 骨架图文件夹路径
     :param cutting_path: 原剪切图文件夹路径
     :param save_path:  保存的文件夹路径
-    :return:
+    :return: 返回一个三维数组，数组中的元素是 map[i][j][k] 表示第k张图片(i, j)的像素点，如果map[i][j][k] = 128 是背景
+                                                                                如果map[i][j][k] = 255 是书法字
+                                                                                如果map[i][j][k] = 0 是骨架
     """
+    ret_map = []
     photo_number = len(os.listdir(cutting_path))
     for i in range(photo_number):
-        Repetition(skeleton_path, cutting_path, save_path, i)
+        ret_map.append(Repetition(skeleton_path, cutting_path, save_path, i))
+    ret_map = np.array(ret_map)
+    ret_map_2d = ret_map.reshape(ret_map.shape[0], -1, order='F')
+    with open(save_path + "_data.csv", 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(ret_map_2d)
+    # print(ret_map)
 
 #
 # if __name__ == '__main__':
-#     base_path = f'../data/{202110310195}'
+#     ret_map = []
+#     base_path = f'static/data/{202110310195}'
 #     cutting_path = base_path + "/Cutting"
 #     skeleton_path = base_path + "/Skeleton"
 #     save_path = base_path + "/Short_Skeleton"
 #     photo_number = len(os.listdir(cutting_path))
-#     for i in range(photo_number):
-#         Repetition(skeleton_path, cutting_path, save_path, i)
+#     # ret_map = []
+#     with open(save_path + "_data.csv", 'w', newline='') as f:
+#         for i in range(photo_number):
+#             data = Repetition(skeleton_path, cutting_path, save_path, i)
+#             writer = csv.writer(f)
+#             data = data.reshape(1, 100 * 100, order='F')
+#             writer.writerows(data)
+        # ret_map.append(Repetition(skeleton_path, cutting_path, save_path, i))
+    # ret_map = np.array(ret_map)
+    # print(ret_map.shape)
+    # ret_map_2d = ret_map.reshape(ret_map.shape[1], -1)
+    # with open(save_path + "_data.csv", 'w', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerows(ret_map_2d)

@@ -3,10 +3,12 @@
 #               2020, 37(7):8.DOI:10.3969/j.issn.1000-386x.2020.07.017.
 # 上述论文我复现了他过滤孤立点的算法，我严重怀疑论文是在胡扯
 import os
-
+import time
 import cv2
 from skimage import measure
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
+import threading
 
 
 # 获取邻居
@@ -152,14 +154,41 @@ def start_thinning(original_path, save_path):
     photo_number = len(os.listdir(original_path))
     print(photo_number)
     # 后期变成多线程并发
+    threads = []
+    start_time = time.time()
+
+    # 多线程优化
+    with ThreadPoolExecutor(max_workers=int(photo_number * 1.25)) as executor:
+        for i in range(photo_number):
+            results = executor.submit(Skeleton_Extraction, original_path + f"/{i}.jpg", save_path + f"/{i}.jpg", 10, i)
+            threads.append(results)
+    for future in threads:
+        future.result()
+    end_time = time.time()
+    print(end_time - start_time)
+
+    # for i in range(photo_number):
+    #     Skeleton_Extraction(original_path + f"/{i}.jpg", save_path + f"/{i}.jpg", 10, i)
+    # for i in range(photo_number):
+    #     thread = threading.Thread(target=Skeleton_Extraction, args=(original_path + f"/{i}.jpg", save_path + f"/{i}.jpg", 10, i))
+    #     threads.append(thread)
+    #     thread.start()
+    # for thread in threads:
+    #     thread.join()
+        # print(f"threadname {thread.name} finished")
+    # print("thread is finished")
+    # end_time = time.time()
+    # print(end_time - start_time)
+        # Skeleton_Extraction(original_path + f"/{i}.jpg", save_path + f"/{i}.jpg", 10, i)
+
+
+if __name__ == '__main__':
+    start_time = time.time()
+    base_path = f'static/data/{202110310195}'
+    photo_number = len(os.listdir(base_path + "/Cutting"))
+    print(photo_number)
+    # 后期变成多线程并发
     for i in range(photo_number):
-        Skeleton_Extraction(original_path + f"/{i}.jpg", save_path + f"/{i}.jpg", 10, i)
-
-
-# if __name__ == '__main__':
-#     base_path = f'../data/{202110310195}'
-#     photo_number = len(os.listdir(base_path + "/Cutting"))
-#     print(photo_number)
-#     # 后期变成多线程并发
-#     for i in range(photo_number):
-#         Skeleton_Extraction(base_path + "/Cutting" + f"/{i}.jpg", base_path + "/Skeleton" + f"/{i}.jpg", 10, i)
+        Skeleton_Extraction(base_path + "/Cutting" + f"/{i}.jpg", base_path + "/Skeleton" + f"/{i}.jpg", 10, i)
+    end_time = time.time()
+    print(end_time - start_time)
