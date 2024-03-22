@@ -56,19 +56,62 @@ def Looking_for_Intersection_Point(skeleton_image):
     for now_x in range(1, rows - 1):
         for now_y in range(1, cols - 1):
             if Intersection_point_Judgement(skeleton_image, now_x, now_y) and skeleton_image[now_x][now_y] == 255:
-                skeleton_image[now_x][now_y] = 0
+                # skeleton_image[now_x - 1: now_x + 2][now_y - 1: now_y + 2] = 0
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        if skeleton_image[now_x + i][now_y + j] == 255:
+                            skeleton_image[now_x + i][now_y + j] = 0
 
 
 def Is_Start_Point(skeleton_image, now_x, now_y, visit_map):
     cnt = 0
     for x in range(now_x - 1, now_x + 2):
         for y in range(now_y - 1, now_y + 2):
-            if 0 > x or x >= 80 or 0 > y or y >= 80:
+            if 0 > x or x >= 100 or 0 > y or y >= 100:
                 continue
             if not visit_map[x][y] and skeleton_image[x][y] == 255:
                 cnt += 1
     # 算上自己应该是2个
     return cnt
+
+
+# def erase_start(skeleton_image, now_x, now_y):
+#     """
+#     从 now_x, now_y 开始消除骨架
+#     :param skeleton_image:
+#     :param now_x:
+#     :param now_y:
+#     """
+#     q = queue.Queue()
+#     q.put((now_x, now_y))
+#     skeleton_image[now_x][now_y] = 0
+#     while not q.empty():
+#         now_x, now_y = q.get()
+#         for i in range(8):
+#             xx = now_x + dx[i]
+#             yy = now_y + dy[i]
+#             if skeleton_image[xx][yy] == 255:
+#                 skeleton_image[xx][yy] = 0
+#                 q.put((xx, yy))
+
+
+def erase_connectedComponents(skeleton_image):
+    """
+    :param skeleton_image: 处理过的骨架图
+    """
+    # visit_map = np.zeros([skeleton_image.shape[0], skeleton_image.shape[1]], dtype="uint8")
+    for i in range(1, skeleton_image.shape[0] - 1):
+        for j in range(1, skeleton_image.shape[1] - 1):
+            # print(f"now={i} {j}")
+            if skeleton_image[i][j] == 255:
+                flag = 0
+                for k in range(8):
+                    xx = dx[k] + i
+                    yy = dy[k] + j
+                    if skeleton_image[xx][yy] != 255:
+                        flag += 1
+                if flag == 8:
+                    skeleton_image[i][j] = 0
 
 
 def Repetition(skeleton_path, cutting_path, save_path, picture_name):
@@ -90,6 +133,7 @@ def Repetition(skeleton_path, cutting_path, save_path, picture_name):
     # cv2.imshow("Skeleton Image", skeleton_image)
     # cv2.waitKey(0)
     Looking_for_Intersection_Point(skeleton_image)
+    erase_connectedComponents(skeleton_image)
     # 返回短笔画集合
     # short_stroke = Looking_for_Short_Stroke(skeleton_image)
     # 开始绘图
@@ -109,7 +153,7 @@ def Repetition(skeleton_path, cutting_path, save_path, picture_name):
     # for one_short_stroke in short_stroke:
     #     for (x, y) in one_short_stroke:
     #         stroke_picture[x][y] = 255
-        # stroke_num += 1
+    # stroke_num += 1
 
     cv2.imwrite(save_path + f'/{picture_name}.jpg', stroke_picture)
     # cv2.imshow("new image", stroke_picture)
@@ -133,7 +177,7 @@ def start_stroke_repetition(skeleton_path, cutting_path, save_path):
     for i in range(photo_number):
         ret_map.append(Repetition(skeleton_path, cutting_path, save_path, i))
     ret_map = np.array(ret_map)
-    ret_map_2d = ret_map.reshape(ret_map.shape[0], -1, order='F')
+    ret_map_2d = ret_map.reshape(ret_map.shape[0], -1)
     with open(save_path + "_data.csv", 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(ret_map_2d)
@@ -147,17 +191,19 @@ def start_stroke_repetition(skeleton_path, cutting_path, save_path):
 #     skeleton_path = base_path + "/Skeleton"
 #     save_path = base_path + "/Short_Skeleton"
 #     photo_number = len(os.listdir(cutting_path))
-#     # ret_map = []
-#     with open(save_path + "_data.csv", 'w', newline='') as f:
-#         for i in range(photo_number):
-#             data = Repetition(skeleton_path, cutting_path, save_path, i)
-#             writer = csv.writer(f)
-#             data = data.reshape(1, 100 * 100, order='F')
-#             writer.writerows(data)
-        # ret_map.append(Repetition(skeleton_path, cutting_path, save_path, i))
-    # ret_map = np.array(ret_map)
-    # print(ret_map.shape)
-    # ret_map_2d = ret_map.reshape(ret_map.shape[1], -1)
-    # with open(save_path + "_data.csv", 'w', newline='') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerows(ret_map_2d)
+#     for i in range(photo_number):
+#         data = Repetition(skeleton_path, cutting_path, save_path, i)
+# ret_map = []
+# with open(save_path + "_data.csv", 'w', newline='') as f:
+#     for i in range(photo_number):
+#         data = Repetition(skeleton_path, cutting_path, save_path, i)
+#         writer = csv.writer(f)
+#         data = data.reshape(1, 100 * 100, order='F')
+#         writer.writerows(data)
+# ret_map.append(Repetition(skeleton_path, cutting_path, save_path, i))
+# ret_map = np.array(ret_map)
+# print(ret_map.shape)
+# ret_map_2d = ret_map.reshape(ret_map.shape[1], -1)
+# with open(save_path + "_data.csv", 'w', newline='') as f:
+#     writer = csv.writer(f)
+#     writer.writerows(ret_map_2d)
