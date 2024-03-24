@@ -4,50 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MORKER-招贤纳士</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <style>
+        body {
+			font-family: 'Arial', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+		}
+
+		.top-head {
+			background-color: #333;
+			color: #fff;
+			padding: 10px 0;
+		}
+
+		.nav-menu {
+			list-style: none;
+			display: flex;
+			justify-content: start;
+			align-items: center;
+			padding-left: 20px;
+		}
+
+		.nav-menu li {
+			margin-right: 20px;
+		}
+
+		.nav-menu li a {
+			color: white;
+			text-decoration: none;
+			font-size: 16px;
+		}
+
+		.logo {
+			height: 50px;
+		}
+
+		.content {
+			padding: 20px;
+			text-align: center;
+		}
+
+		.contact-info {
+			margin: 20px auto;
+			width: 80%;
+			border-collapse: collapse;
+		}
+
+		.contact-info th, .contact-info td {
+			font-size: 18px;
+			padding: 10px;
+			border-bottom: 1px solid #ddd;
+		}
+
+		h1 {
+			color: #333;
+		}
+
+		p {
+			font-size: 16px;
+			color: #666;
+		}
+    </style>
 </head>
 <body>
-    <!-- 网页页头 -->
-{#    <div class="box1">#}
-        <div class="top-head">
-            <ul class="left-entry">
-                <li class="v-popover-wrap"><a href="/"><img src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
-                                                                      style="margin-top: 10px; margin-left: 10px;"></a></li>
-                <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
-{#                <li class="v-popover-wrap"><span><a href="">登录</a></span></li>#}
-                <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
-            </ul>
-        </div>
-{#    </div>#}
-    <div class="searchingpage" style="height: 1000px;">
-        <br><br><br><br>
-        <div class="title">欢迎联系PictureHub!</div>
-        <br>
-        <div class="write" style="text-align: left; font-size: 30px">&nbsp&nbsp&nbsp&nbsp您可以通过以下方式联系到这个网站的制作者：</div>
-        <br><br>
-        <table class="write" style="text-align: left; font-size: 30px; font-family:heiti">
+    <div class="top-head">
+        <ul class="nav-menu">
+            <li><a href="/"><img src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}" alt="Logo" class="logo"></a></li>
+            <li><a href="/login">立即体验</a></li>
+            <li><a href="/contact">招贤纳士</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>欢迎联系PictureHub!</h1>
+        <p>您可以通过以下方式联系到这个网站的制作者：</p>
+        <table class="contact-info">
             <tbody>
-                <tr><th>&nbsp&nbsp&nbsp&nbsp制作者：蒋玮杰 上海海事大学</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbsp邮箱：202110310195@shmtu.edu.cn 或者 2196607709@qq.com</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbsp电话：+86 13917734176</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbspGithub：Flammmming</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbsp地址：中国上海浦东新区海港大道1550号 <a href="https://www.shmtu.edu.cn">上海海事大学</a> <a href="https://cie.shmtu.edu.cn/">信息工程学院</a></th></tr>
-            </tbody>
+				<tr><th>&nbsp&nbsp&nbsp&nbsp制作者：蒋玮杰 上海海事大学</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbsp邮箱：202110310195@shmtu.edu.cn 或者 2196607709@qq.com</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbsp电话：+86 13917734176</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbspGithub：Flammmming</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbsp地址：中国上海浦东新区海港大道1550号 <a href=“https://www.shmtu.edu.cn”>上海海事大学</a> <a href=“https://cie.shmtu.edu.cn/”>信息工程学院</a></th></tr>
+			</tbody>
         </table>
-        <br><br><br><br>
-        <div class="title">Thank you for your contact!</div>
-        <br>
-        <div class="write" style="text-align: left; font-size: 30px">&nbsp&nbsp&nbsp&nbspYou can use the following information to get contact with the contributor:</div>
-        <br><br>
-        <table class="write" style="text-align: left; font-size: 30px; font-family:heiti">
+        <h1>Thank you for your contact!</h1>
+        <p>You can use the following information to get contact with the contributor:</p>
+        <table class="contact-info">
             <tbody>
-                <tr><th>&nbsp&nbsp&nbsp&nbspContributor: Weijie Jiang. Shanghai Maritime University</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbspMail: 202110310195@shmtu.edu.cn or 2196607709@qq.com</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbspTelephone: +86 13917734176</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbspGithub: Flammmming</th></tr>
-                <tr><th>&nbsp&nbsp&nbsp&nbspAdderss: Harbour Road 1550. Pudong New District. Shanghai. China</th></tr>
-                <tr><th><a href="https://www.shmtu.edu.cn">&nbsp&nbsp&nbsp&nbspAddress Name: College of Information and Engineering in Shanghai Maritime University</a></th></tr>
-            </tbody>
+				<tr><th>&nbsp&nbsp&nbsp&nbspContributor: Weijie Jiang. Shanghai Maritime University</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbspMail: 202110310195@shmtu.edu.cn or 2196607709@qq.com</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbspTelephone: +86 13917734176</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbspGithub: Flammmming</th></tr>
+				<tr><th>&nbsp&nbsp&nbsp&nbspAdderss: Harbour Road 1550. Pudong New District. Shanghai. China</th></tr>
+				<tr><th><a href=“https://www.shmtu.edu.cn”>&nbsp&nbsp&nbsp&nbspAddress Name: College of Information and Engineering in Shanghai Maritime University</a></th></tr>
+			</tbody>
         </table>
     </div>
 </body>
