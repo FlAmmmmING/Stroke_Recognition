@@ -115,6 +115,7 @@ input::placeholder {
     width: 600px;
     height: auto;
     margin-top: 150px;
+    font-size: 20px;
     left: 0;
     place-items: center;
 }
@@ -125,7 +126,7 @@ input::placeholder {
     /*border: 5px solid #de0000; !* 画布边框样式 *!*/
     width: 400px;
     height: auto;
-    margin-top: 300px;
+    margin-top: 200px;
     left: 100px;
     place-items: center;
 }
@@ -136,7 +137,7 @@ input::placeholder {
     /*border: 5px solid #de0000; !* 画布边框样式 *!*/
     width: 400px;
     height: auto;
-    margin-top: 400px;
+    margin-top: 300px;
     left: 100px;
     place-items: center;
 }
@@ -147,13 +148,24 @@ input::placeholder {
     /*border: 5px solid #de0000; !* 画布边框样式 *!*/
     width: 400px;
     height: auto;
-    margin-top: 500px;
+    margin-top: 400px;
     left: 100px;
     place-items: center;
 }
 
 .ul-style5 {
     user-select: none;
+    position: absolute;
+    /*border: 5px solid #de0000; !* 画布边框样式 *!*/
+    width: 400px;
+    height: auto;
+    margin-top: 500px;
+    left: 100px;
+    place-items: center;
+}
+
+.ul-style6 {
+     user-select: none;
     position: absolute;
     /*border: 5px solid #de0000; !* 画布边框样式 *!*/
     width: 400px;
@@ -176,7 +188,7 @@ input::placeholder {
 .writing-style2 {
     user-select: none;
     position: absolute;
-    margin-top: 280px;
+    margin-top: 200px;
     font-size: 30px;
     width: 600px;
     height: auto;

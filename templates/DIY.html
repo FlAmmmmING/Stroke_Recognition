@@ -7,6 +7,12 @@
     <title>MORKER-开始！</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/DIY.css') }}">
+    <style>
+        input {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
 {% import "bootstrap/wtf.html" as wtf %}
 <body>
@@ -21,6 +27,7 @@
         #}
         <li class="v-popover-wrap"><span><a href="/history/{{ username }}">我的历史</a></span></li>
     </ul>
+
 </div>
 <div class="diypage" style="height: 100%;">
     <br><br><br><br><br><br>
@@ -42,7 +49,8 @@
         </canvas>
         <div class="canvas_operation">
             <!--            这个地方选择对图片的操作            -->
-            <div class="writing-style1">笔画操作选项<br>这里建议先微调，再桥接骨架，再检查方向，最后设置笔画顺序</div>
+            <div class="writing-style1">骨架操作选项<br>请注意，操作骨架的时候请不要将骨架堆叠，否则难以生成正确的笔画方向
+            </div>
             <ul class="ul-style">
                 <li>
                     <label>
@@ -54,26 +62,26 @@
                         <input type="radio" name="modify" value="action6">
                     </label>骨架添加
                 </li>
-<!--                <li>-->
-<!--                    <label>-->
-<!--                        <input type="radio" name="modify" value="action2">-->
-<!--                    </label>骨架桥接设置-->
-<!--                </li>-->
+                <!--                <li>-->
+                <!--                    <label>-->
+                <!--                        <input type="radio" name="modify" value="action2">-->
+                <!--                    </label>骨架桥接设置-->
+                <!--                </li>-->
                 <li>
                     <label>
                         <input type="radio" name="modify" value="action3">
                     </label>骨架删除
                 </li>
-                <li>
-                    <label>
-                        <input type="radio" name="modify" value="action4">
-                    </label>笔画方向(请务必设置)
-                </li>
-                <li>
-                    <label>
-                        <input type="radio" name="modify" value="action5">
-                    </label>笔画顺序指定(请务必设置)
-                </li>
+                <!--                <li>-->
+                <!--                    <label>-->
+                <!--                        <input type="radio" name="modify" value="action4">-->
+                <!--                    </label>笔画方向(请务必设置)-->
+                <!--                </li>-->
+                <!--                <li>-->
+                <!--                    <label>-->
+                <!--                        <input type="radio" name="modify" value="action5">-->
+                <!--                    </label>笔画顺序指定(请务必设置)-->
+                <!--                </li>-->
             </ul>
             <div class="writing-style2">整体操作</div>
             <div class="ul-style2">
@@ -83,364 +91,28 @@
                 <button class="btn" name="operation" id="reset">重置当前制作</button>
             </div>
             <div class="ul-style4">
-                <button class="btn" name="operation" id="back">退回至上一个图片</button>
+                <button class="btn" name="operation" id="generate_stroke">笔画方向顺序指定</button>
             </div>
             <div class="ul-style5">
+                <button class="btn" name="operation" id="back">退回至上一个图片</button>
+            </div>
+            <div class="ul-style6">
                 <button class="btn" name="operation" id="upload">上传骨架，生成视频</button>
             </div>
         </div>
     </div>
 </div>
 <!--    &lt;!&ndash;    外部引入js    &ndash;&gt;-->
-<!--<script type="text/javascript" src="{{ url_for('static', filename='js/DIY.js') }}"></script>-->
 </body>
-
-
 <script>
-    const N = 100;
-    const pixel_size = 8;
-    const Stroke_Number = parseInt('{{ picture_number }}');
-    let dx = [-1, -1, -1, 0, 0, 1, 1, 1];
-    let dy = [1, -1, 0, 1, -1, 1, -1, 0];
-    // 用来实现操作撤销的
-    let history_rollback = [];
-    // 读取后端已经存储好的数据
     let Stroke_Data_String = '{{ Stroke_Map.tolist() }}';
-    let cnt = 0;
-    // 这里存放的是本次扫描的所有文字的map
-    Stroke_Data_Full = Stroke_Data_String.substring(1, Stroke_Data_String.length - 1).split(',').map(str => parseInt(str));
-    // 显示画板
-    // 100 * 100 的像素点map，在初始状态下，我们需要导入后台的短笔画
-    let map = Array(N).fill().map(() => Array(N));
-    let canvas = document.getElementById("c1");
-    let ctx = canvas.getContext("2d");
-    canvas.width = N * pixel_size;
-    canvas.height = N * pixel_size;
-
-    init();
-
-    // 存放的是笔画的像素点坐标
-    let ret_arr = []
-    let radioButtons = document.querySelectorAll('input[type="radio"][name="modify"]');
-    radioButtons.forEach(function (radioButton) {
-        radioButton.addEventListener('click', function() {
-            switch(this.value) {
-                case 'action1':
-                    // console.log("执行1号");
-                    canvas.addEventListener('click', option1);
-                    // canvas.removeEventListener('click', option2);
-                    canvas.removeEventListener('click', option3);
-                    canvas.removeEventListener('click', option6);
-                    break;
-                // case 'action2':
-                //     canvas.addEventListener('click', option2);
-                //     canvas.removeEventListener('click', option1);
-                //     canvas.removeEventListener('click', option3);
-                //     canvas.removeEventListener('click', option6);
-                    // console.log("执行2号");
-                    // break;
-                case 'action3':
-                    canvas.removeEventListener('click', option1);
-                    // canvas.removeEventListener('click', option2);
-                    canvas.addEventListener('click', option3);
-                    canvas.removeEventListener('click', option6);
-                    // console.log("执行3号");
-                    break;
-                case 'action4':
-                    canvas.removeEventListener('click', option1);
-                    // canvas.removeEventListener('click', option2);
-                    canvas.removeEventListener('click', option3);
-                    canvas.removeEventListener('click', option6);
-                    // console.log("执行4号");
-                    break;
-                case 'action5':
-                    canvas.removeEventListener('click', option1);
-                    // canvas.removeEventListener('click', option2);
-                    canvas.removeEventListener('click', option3);
-                    canvas.removeEventListener('click', option6);
-                    // console.log("执行5号");
-                    break;
-                case 'action6':
-                    canvas.removeEventListener('click', option1);
-                    // canvas.removeEventListener('click', option2);
-                    canvas.removeEventListener('click', option3);
-                    canvas.addEventListener('click', option6);
-                    // console.log("执行5号");
-                    break;
-            }
-        })
-    })
-    // 添加事件
-    // canvas.addEventListener("click", detect);
-
-    function init() {
-        // 清除history_rollback()
-        history_rollback = []
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < N; i++) {
-            // let str = "";
-            for (let j = 0; j < N; j++) {
-                ctx.beginPath();
-                ctx.rect(pixel_size * j, pixel_size * i, pixel_size, pixel_size);
-                if (Stroke_Data_Full[cnt] === 0) {
-                    map[j][i] = 0;
-                    // 这里是笔画
-                    ctx.fillStyle = "#000000";
-                } else if (Stroke_Data_Full[cnt] === 128) {
-                    map[j][i] = 128;
-                    // 这里是背景
-                    ctx.fillStyle = '#808080';
-                } else {
-                    // 这里是骨架
-                    map[j][i] = 255
-                    ctx.fillStyle = '#ffffff';
-                }
-                cnt++;
-                ctx.fill();
-                // str += map[i][j].toString() + ' ';
-            }
-            // console.log(str);
-            let first = document.getElementById("back");
-            let last = document.getElementById("upload");
-            if (cnt === N * N) {
-                first.textContent = "这已经是第一张图片";
-            } else {
-                first.textContent = "退回至上一个图片";
-            }
-            if (cnt === Stroke_Data_Full.length) {
-                last.textContent = "跳转至生成界面";
-            }
-            else {
-                last.textContent = "上传骨架，生成视频";
-            }
-        }
-    }
-
-    function generate_current_picture() {
-        for (let i = 0; i < N; i++) {
-            for (let j = 0; j < N; j++) {
-                ctx.beginPath();
-                ctx.rect(pixel_size * i, pixel_size * j, pixel_size, pixel_size);
-                // 白色表示没有被编辑的骨架
-                // 黑色表示原本书法文字
-                // 灰色表示原本的背景颜色
-                // 红色表示用于骨架桥接的时候选择的短笔画桥截图 map[i, j] = 1
-                // 紫色表示已经桥接完毕的骨架 map[i, j] = 2
-                // 黄色表示这个笔画的开头，即方向 map[i, j] = 3
-                // 蓝色表示创建骨架的地点
-                switch (map[i][j]) {
-                    case 255:
-                        ctx.fillStyle = '#ffffff';
-                        break;
-                    case 0:
-                        ctx.fillStyle = '#000000';
-                        break;
-                    case 128:
-                        ctx.fillStyle = '#808080';
-                        break;
-                    case 1:
-                        ctx.fillStyle = '#ff0000';
-                        break;
-                    case 2:
-                        ctx.fillStyle = '#a300ff';
-                        break;
-                    case 3:
-                        ctx.fillStyle = '#fff400';
-                        break;
-                    case 4:
-                        ctx.fillStyle = '#0048ff';
-                }
-                ctx.fill();
-            }
-        }
-    }
-
-    function single_pixel_modify(x, y) {
-        add_history();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] === 0 || map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] === 255)
-            map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] = 255 - map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)];
-        generate_current_picture();
-    }
-
-    // function skeleton_bridge(x, y) {
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //     if (map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] === 255) {
-    //         map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] = 1;
-    //         let queue = [];
-    //         // 寻找这个骨架的全部，并且染色染成红色
-    //         // 广度优先搜索
-    //         console.log(Math.floor(x / pixel_size).toString() + "." + Math.floor(y / pixel_size).toString());
-    //         queue.push([Math.floor(x / pixel_size), Math.floor(y / pixel_size)]);
-    //         while (queue.length) {
-    //             let now = queue.shift();
-    //             let now_x = now[0];
-    //             let now_y = now[1];
-    //             for (let i = 0; i < 8; i++) {
-    //                 let xx = now_x + dx[i];
-    //                 let yy = now_y + dy[i];
-    //                 if (map[xx][yy] === 255) {
-    //                     map[xx][yy] = 1;
-    //                     queue.push([xx, yy]);
-    //                 }
-    //             }
-    //             // console.log(now_x);
-    //         }
-    //
-    //         // console.log(Math.floor(x / pixel_size));
-    //         // console.log(Math.floor(y / pixel_size));
-    //
-    //     }
-    //     generate_current_picture();
-    // }
-
-    function delete_skeleton(x, y) {
-        add_history();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] === 255) {
-            map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)] = 0;
-            let queue = [];
-            // 寻找这个骨架的全部，并且染色染成红色
-            // 广度优先搜索
-            // console.log(Math.floor(x / pixel_size).toString() + "." + Math.floor(y / pixel_size).toString());
-            queue.push([Math.floor(x / pixel_size), Math.floor(y / pixel_size)]);
-            while (queue.length) {
-                let now = queue.shift();
-                let now_x = now[0];
-                let now_y = now[1];
-                for (let i = 0; i < 8; i++) {
-                    let xx = now_x + dx[i];
-                    let yy = now_y + dy[i];
-                    if (map[xx][yy] === 255) {
-                        map[xx][yy] = 0;
-                        queue.push([xx, yy]);
-                    }
-                }
-                // console.log(now_x);
-            }
-
-            // console.log(Math.floor(x / pixel_size));
-            // console.log(Math.floor(y / pixel_size));
-
-        }
-        generate_current_picture();
-    }
-
-    // 第一个操作
-    function option1(event) {
-        // 鼠标点击，获取(x, y)位置
-        // generate_current_picture();
-        let x = event.clientX - canvas.getBoundingClientRect().left;
-        let y = event.clientY - canvas.getBoundingClientRect().top;
-        single_pixel_modify(x, y);
-    }
-
-
-
-
-
-    // 第二个操作
-    // function option2(event) {
-    //     // 鼠标点击，获取(x, y)位置
-    //     // generate_current_picture();
-    //     let x = event.clientX - canvas.getBoundingClientRect().left;
-    //     let y = event.clientY - canvas.getBoundingClientRect().top;
-    //     skeleton_bridge(x, y);
-    // }
-
-    function option3(event) {
-        // generate_current_picture();
-        let x = event.clientX - canvas.getBoundingClientRect().left;
-        let y = event.clientY - canvas.getBoundingClientRect().top;
-        delete_skeleton(x, y);
-    }
-
-
-    let isDrawing = false;
-    let start_x, start_y, end_x, end_y;
-    function option6(event) {
-        let x = event.clientX - canvas.getBoundingClientRect().left;
-        let y = event.clientY - canvas.getBoundingClientRect().top;
-        x = Math.floor(x / pixel_size);
-        y = Math.floor(y / pixel_size);
-        if (map[x][y] !== 0 && map[x][y] !== 4) return;
-            if (!isDrawing) {
-            add_history();
-                start_x = x;
-                start_y = y;
-                map[start_x][start_y] = 4;
-            }
-            else {
-                end_x = x;
-                end_y = y;
-                let fx = end_x - start_x;
-                let fy = end_y - start_y;
-                map[start_x][start_y] = 255;
-                map[end_x][end_y] = 255;
-                console.log(start_x);
-                console.log(start_y);
-                console.log(end_x);
-                console.log(end_y);
-                let now_x = start_x;
-                let now_y = start_y;
-                let max_d = Math.max(Math.abs(fx), Math.abs(fy));
-                let p = 0;
-                while (Math.abs(now_x - end_x) > 1.5 || Math.abs(now_y - end_y) > 1.5 && p <= max_d) {
-                    p++;
-                    now_x += fx / max_d;
-                    now_y += fy / max_d;
-                    map[Math.round(now_x)][Math.round(now_y)] = 255;
-                    console.log(now_x);
-                    console.log(now_y);
-                }
-                // map[end_x][end_y] = 1;
-                // ctx.beginPath();
-                // ctx.moveTo(start_x, start_y);
-                // ctx.strokeStyle = "#ffffff";
-            }
-        isDrawing ^= 1;
-        generate_current_picture();
-    }
-
-    let reset = document.getElementById('reset');
-    reset.addEventListener('click', function() {
-        cnt -= N * N;
-        init();
-    })
-
-    let rollback = document.getElementById('roll_back');
-    rollback.addEventListener('click', function() {
-        if (history_rollback.length === 0) return;
-        console.log(history_rollback.length);
-        map = history_rollback.top();
-        console.log("map->" + map);
-        generate_current_picture();
-    })
-
-     // 添加历史
-    function add_history() {
-        history_rollback.push(map);
-        console.log("adding");
-    }
-
-    let back = document.getElementById('back');
-    back.addEventListener('click', function() {
-        if (cnt === N * N) {
-            console.log("已经是第一张了");
-            return;
-        }
-        cnt -= 2 * N * N;
-        init();
-    })
-
-    let upload = document.getElementById('upload');
-    upload.addEventListener('click', function() {
-        if (cnt === Stroke_Data_Full.length) {
-            console.log("这是最后一张");
-            return;
-        }
-        init();
-    })
-    // };
+    let Username = '{{ username }}';
+    let PictureName = '{{ PictureName }}';
 </script>
+<!--<script type="text/javascript" src="{{ url_for('static', filename='js/require.js') }}"></script>-->
+<script type="text/javascript" src="{{ url_for('static', filename='js/DIY.js') }}"></script>
+
+<!--<script>-->
+
+<!--</script>-->
 </html>

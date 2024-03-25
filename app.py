@@ -5,7 +5,7 @@ from datetime import datetime
 import cv2
 import numpy as np
 
-import Back_End, Create_Folder_and_DataSet
+import Back_End, Create_Folder_and_DataSet, Stroke_Video_Generation
 from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -15,6 +15,7 @@ from flask_wtf.file import FileAllowed, FileField
 from wtforms.validators import DataRequired, Email, EqualTo  # 验证数据不能为空
 from flask_bootstrap import Bootstrap
 import time
+import subprocess
 
 """"""""""""""""""""""""
 """ 这里是初始化的代码 """
@@ -205,15 +206,11 @@ def Stroke(username):
                     db.session.commit()
                     flash('上传成功！请耐心等待！')
 
-
-
                     # 图片上传至后端
                     # 返回 ret_map
                     # Back_End.start_project(Picture, username, PictureName)
 
-
-
-                    return redirect(url_for('DIY', username=username))
+                    return redirect(url_for('DIY', username=username, PictureName=PictureName))
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
                     db.session.rollback()
@@ -232,20 +229,25 @@ def Stroke(username):
 """"""""""""""""""""""""
 
 
-@app.route('/Stroke/DIY/<username>', methods=['GET', 'POST'])
-def DIY(username):
+@app.route('/Stroke/DIY/<username>/<PictureName>', methods=['GET', 'POST'])
+def DIY(username, PictureName):
     # print(basedir)
     picture_folder = f'static/data/{username}/Short_Skeleton'
     picture_path = os.listdir(picture_folder)
     picture_number = len(picture_path)
-    print(picture_number)
+    # picture_name =
+    data = request.data
+    print(data)
+    # print(picture_path)
     with open(f'static/data/{username}/Short_Skeleton_data.csv', "r") as f:
         reader = csv.reader(f)
         # ret_map = csv.reader(f)
         ret_map = np.array(list(reader)).astype("int")
     ret_map = ret_map.reshape(-1)
+    # data = request.json
     # print(type(ret_map))
-    return render_template('DIY.html', username=username, picture_folder=picture_folder, picture_number=picture_number, pitcure_path=picture_path, Stroke_Map=ret_map)
+    return render_template('DIY.html', username=username, picture_folder=picture_folder, picture_number=picture_number,
+                           pitcure_path=picture_path, Stroke_Map=ret_map, PictureName=PictureName)
 
 
 """"""""""""""""""""""""
