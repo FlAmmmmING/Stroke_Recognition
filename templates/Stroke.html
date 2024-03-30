@@ -126,38 +126,40 @@
             <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
         </ul>
     </div>
-<div class="Stroke-body">
-    <br><br><br><br><br><br>
-    {% if get_flashed_messages()[0] == '上传成功！请耐心等待！' %}
-    <button type="button" class="signup_success" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
-    {% endif %}
-    {% if get_flashed_messages()[0] == '有相同名字的图片！' %}
-    <button type="button" class="signup_found_no_user" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
-    {% endif %}
-    {% if get_flashed_messages()[0] == '请上传图片！' or get_flashed_messages()[0] == '上传失败，可能的原因是：1.上传的图片格式非jpg
-    2.图片过大 3.图片不合规' %}
-    <button type="button" class="signup_wrong_password" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
-    {% endif %}
-    <div class="title" style="font-size: 80px; font-family: 华文楷体">墨韵踪迹</div>
-    <div class="write" style="font-size: 20px;"></div>
-    <br><br>
-    <br><br>
-    <form method="post" enctype="multipart/form-data" class="form-style-Stroke">
-        <!--             <input type="file" name='SubmitPicture' placeholder="上传jpg图片" >-->
-        <input type="file" name="SubmitPicture" id="file" style="display: none;">
-        <label for="file"
-               style="padding: 10px 20px; border: 1px solid #3f3e3e; cursor: pointer; background-color: #fdfdfd">选择范本作品</label>
+    <div class="Stroke-body">
+        <br><br><br><br><br><br>
+        {% if get_flashed_messages()[0] == '上传成功！请耐心等待！' %}
+        <button type="button" class="signup_success" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+        {% endif %}
+        {% if get_flashed_messages()[0] == '有相同名字的图片！' %}
+        <button type="button" class="signup_found_no_user" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+        {% endif %}
+        {% if get_flashed_messages()[0] == '请上传图片！' or get_flashed_messages()[0] == '上传失败，可能的原因是：1.上传的图片格式非jpg
+        2.图片过大 3.图片不合规' %}
+        <button type="button" class="signup_wrong_password" data-dismiss="alert">{{ get_flashed_messages()[0] }}
+        </button>
+        {% endif %}
+        <div class="title" style="font-size: 80px; font-family: 华文楷体">墨韵踪迹</div>
+        <div class="write" style="font-size: 20px;"></div>
         <br><br>
-        <div id="file-name"></div>
-        <button type="submit" name="modify" class="form-style-button">骨架修改</button>
-    </form>
-    <div id="image-preview" class="preview_position">上传的图片会显示在这里</div>
-    <div id="video-generation" class="preview_position_video">上传图片后点击生成视频，这里会显示书法作品复现</div>
-    <form enctype="multipart/form-data" id="upload-form">
-        <!-- 用于显示所选文件的图片预览区域 -->
-        <button type="submit" name="update" class="form-style-button-position form-style-button">生成视频</button>
-    </form>
-</div>
+        <br><br>
+        <form method="post" enctype="multipart/form-data" class="form-style-Stroke">
+            <!--             <input type="file" name='SubmitPicture' placeholder="上传jpg图片" >-->
+            <input type="file" name="SubmitPicture" id="file" style="display: none;">
+            <label for="file"
+                   style="padding: 10px 20px; border: 1px solid #3f3e3e; cursor: pointer; background-color: #fdfdfd">选择范本作品</label>
+            <br><br>
+            <div id="file-name"></div>
+            <button type="submit" name="modify" class="form-style-button">骨架修改</button>
+        </form>
+        <div id="image-preview" class="preview_position">上传的图片会显示在这里</div>
+        <div id="video-generation" class="preview_position_video">
+            上传图片后点击生成视频，这里会显示书法作品复现
+            <video id="videoPlayer" width="550px" height="550px" controls>
+            </video>
+        </div>
+        <button id="playButton" name="update" class="form-style-button-position form-style-button">生成视频</button>
+    </div>
 </div>
 </body>
 <script>
@@ -200,6 +202,17 @@
             // 如果没有文件被选择，则清空预览区域
             imagePreview.innerHTML = '';
         }
+    });
+    // 在点击按钮时加载和播放视频
+    document.getElementById('playButton').addEventListener('click', function () {
+        // 获取视频元素
+        var video = document.getElementById('videoPlayer');
+
+        // 设置视频源
+        video.src = "{{ url_for('static', filename='video/zhaocibaidicaiyunjian.mp4') }}"; // 替换为您的视频 URL
+
+        // 播放视频
+        video.play();
     });
 </script>
 </html>

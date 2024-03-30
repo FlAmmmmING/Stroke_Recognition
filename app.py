@@ -97,7 +97,7 @@ class History(db.Model):
     picture_name = db.Column(db.String(255), nullable=False)
     picture_id = db.Column(db.Integer, nullable=False)
     Picture = db.Column(db.PickleType, nullable=False)
-
+    Picture_Stroke_list = db.Column(db.String(8192), nullable=False)
 
 """"""""""""""""""""""""
 """ 这里是主页的代码 """
@@ -220,8 +220,7 @@ def Stroke(username):
                     flash('上传成功！请耐心等待！')
                     # 图片上传至后端
                     # 返回 ret_map
-                    # Back_End.start_project(Picture, username, Picture.filename)
-
+                    Back_End.start_project(Picture, username, Picture.filename)
                     return redirect(url_for('DIY', username=username, PictureName=Picture.filename))
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
@@ -309,28 +308,32 @@ def DIY(username, PictureName):
         # print(stroke)
         Stroke_Video_Generation.start_generate(username, PictureName, picture_number, base_path, this_picture_number,
                                                stroke)
-        gif_path = base_path + '/GIF'
-        id = 0
-        t = 0
-        if this_picture_number + 1 == picture_number:
-            for i in range(len(os.listdir(gif_path))):
-                try:
-                    with open(gif_path + f'/{i}.gif', 'rb') as f:
-                        image = f.read()
-                        new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image)
-                        id += 1
-                        t += 1
-                        print(t)
-                        db.session.add(new_image)
-                except:
-                    with open(gif_path + f'/{PictureName}.gif', 'rb') as f:
-                        image = f.read()
-                        new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image)
-                        id += 1
-                        t += 1
-                        print(t)
-                        db.session.add(new_image)
-            db.session.commit()
+        picture_list = base_path + '/Cutting'
+        with open(picture_list + f'/{this_picture_number}.jpg', 'rb') as f:
+            image = f.read()
+            new_image = History(username=username, picture_name=PictureName, picture_id=this_picture_number, Picture=image, Picture_Stroke_list=stroke_string)
+            db.session.add(new_image)
+        db.session.commit()
+        #
+        # if this_picture_number + 1 == picture_number:
+        #     for i in range(len(os.listdir(picture_list))):
+        #         try:
+        #             with open(picture_list + f'/{i}.jpg', 'rb') as f:
+        #                 image = f.read()
+        #                 new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image, PictureList=)
+        #                 id += 1
+        #                 t += 1
+        #                 print(t)
+        #                 db.session.add(new_image)
+        #         except:
+        #             with open(picture_list + f'/{PictureName}.jpg', 'rb') as f:
+        #                 image = f.read()
+        #                 new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image)
+        #                 id += 1
+        #                 t += 1
+        #                 print(t)
+        #                 db.session.add(new_image)
+        #     db.session.commit()
 
     return render_template('DIY.html', username=username, picture_folder=picture_folder, picture_number=picture_number,
                            pitcure_path=picture_path, Stroke_Map=ret_map, PictureName=PictureName)
