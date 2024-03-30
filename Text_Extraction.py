@@ -65,7 +65,7 @@ def Cutting(path, save_dir, acc_percent, resize):
             cut_in_col.append(cropped)
         else:
             p0 += 1
-    cut_in_col.reverse()
+    # cut_in_col.reverse()
     # 处理分割文字，然后进行单个文字的保存
     # cnt 用来给保存的文字编号
     cnt = 0

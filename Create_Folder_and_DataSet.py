@@ -32,6 +32,8 @@ def start_creating(username, PictureName, Picture):
     os.mkdir(base_path + "/Generate_Video")
     # 视频放在这里
     os.mkdir(base_path + "/Video")
+    # gif放这里
+    os.mkdir(base_path + "/GIF")
     # 将图片插入进去
     cv2.imwrite(base_path + f"/Original/{PictureName}.jpg", Picture)
 

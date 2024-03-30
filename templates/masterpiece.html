@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORKER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <style>
+        .box1 {
+            position: fixed;
+            margin-top: 0;
+            width: 100%;
+            height: 100%;
+            /*background-image: linear-gradient(to right,  #ffffff, #fd3f3f);*/
+            background-image: url("imgs/background/background_for_mainpage_1.jpg");
+            background-size: cover;
+        }
+
+        .masterposition {
+            position: fixed;
+            margin-top: 20px;
+            margin-left: 20px;
+            width: 1000px;
+            height: auto;
+        }
+
+        .btn {
+            background-color: #707070;
+            color: #ffffff;
+            width: auto;
+            height: 80px;
+            border: 0;
+            font-size: 30px;
+            font-family: 华文行楷;
+            box-sizing: content-box;
+            border-radius: 5px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #55446e;
+        }
+
+        .masterpiece-video-position {
+            position: fixed;
+            margin-top: 100px;
+            margin-left: 100px;
+        }
+
+        .masterpiece-introduction {
+            width: 750px;
+            height: 100%;
+            margin-top: 100px;
+            padding-left: 40px;
+            transform: translateY(10%);
+        }
+
+        .merge {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 网页页头 -->
+<div class="box1">
+    <div class="top-head">
+        <ul class="left-entry">
+            <li class="v-popover-wrap"><a href="/"><img
+                    src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                    style="margin-top: 10px; margin-left: 10px;"></a></li>
+            <li class="v-popover-wrap"><span><a href="/">首页</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/more_info">了解更多</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/masterpiece">成品展示</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
+        </ul>
+    </div>
+</div>
+<!-- 网页内容 -->
+<div class="body-container">
+    <div class="picture">
+        <ul>
+            <li class="masterpiece-introduction">
+                <div>
+                    <div class="title">
+                        点击以下按钮查看成品
+                    </div>
+                    <div class="masterposition">
+                        <div class="write merge">短语</div>
+                        <button class="btn">精益求精</button>
+                        <button class="btn">登峰造极</button>
+                        <button class="btn">众里寻他千百度</button>
+                        <br>
+                        <button class="btn">万事胜意</button>
+                        <button class="btn">恭喜发财</button>
+                        <div class="write merge">诗词</div>
+                        <button class="btn">静夜思</button>
+                        <button class="btn">早发白夜城</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <video controls width="600px" class="masterpiece-video-position" style="object-fit: cover">
+                    <source src="{{ url_for('static', filename='video/jingyesi.mp4') }}">
+                    点击观看成品展示
+                </video>
+            </li>
+        </ul>
+    </div>
+</div>

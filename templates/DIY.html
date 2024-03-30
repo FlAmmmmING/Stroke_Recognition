@@ -25,7 +25,7 @@
         {#
         <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
         #}
-        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">我的历史</a></span></li>
+        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">历史与作品</a></span></li>
     </ul>
 
 </div>
@@ -54,12 +54,12 @@
             <ul class="ul-style">
                 <li>
                     <label>
-                        <input type="radio" name="modify" value="action1">
+                        <input type="radio" name="modify" value="action1" id="a1">
                     </label>单像素骨架调整
                 </li>
                 <li>
                     <label>
-                        <input type="radio" name="modify" value="action6">
+                        <input type="radio" name="modify" value="action6" id="a6">
                     </label>骨架添加
                 </li>
                 <!--                <li>-->
@@ -69,7 +69,7 @@
                 <!--                </li>-->
                 <li>
                     <label>
-                        <input type="radio" name="modify" value="action3">
+                        <input type="radio" name="modify" value="action3" id="a3">
                     </label>骨架删除
                 </li>
                 <!--                <li>-->
@@ -85,19 +85,19 @@
             </ul>
             <div class="writing-style2">整体操作</div>
             <div class="ul-style2">
-                <button class="btn" name="operation" id="roll_back">撤销上一个操作</button>
+                <button class="btn" name="operation" id="roll_back">撤销上一个操作(Ctrl+Z)</button>
+            </div>
+            <div class="ul-style6">
+                <button class="btn" name="operation" id="reset">重置当前制作(Ctrl+R)</button>
             </div>
             <div class="ul-style3">
-                <button class="btn" name="operation" id="reset">重置当前制作</button>
-            </div>
-            <div class="ul-style4">
                 <button class="btn" name="operation" id="generate_stroke">笔画方向顺序指定</button>
             </div>
             <div class="ul-style5">
-                <button class="btn" name="operation" id="back">退回至上一个图片</button>
+                <button class="btn" name="operation" id="next">下一张</button>
             </div>
-            <div class="ul-style6">
-                <button class="btn" name="operation" id="upload">上传骨架，生成视频</button>
+            <div class="ul-style4">
+                <button class="btn" name="operation" id="upload">上传骨架，生成视频(Ctrl+Y)</button>
             </div>
         </div>
     </div>

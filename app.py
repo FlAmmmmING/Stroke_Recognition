@@ -1,8 +1,10 @@
 import csv
+import json
 import os
 from datetime import datetime
 
 import cv2
+import base64
 import numpy as np
 
 import Back_End, Create_Folder_and_DataSet, Stroke_Video_Generation
@@ -85,6 +87,16 @@ class PictureSet(db.Model):
     Picture = db.Column(db.PickleType, nullable=False)
     PictureName = db.Column(db.String(255), nullable=False)
     CreateTime = db.Column(db.DateTime, nullable=False)
+
+
+# 模型3 创建历史表格
+class History(db.Model):
+    __tablename__ = 'History'
+    pk = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    username = db.Column(db.String(255), nullable=False)
+    picture_name = db.Column(db.String(255), nullable=False)
+    picture_id = db.Column(db.Integer, nullable=False)
+    Picture = db.Column(db.PickleType, nullable=False)
 
 
 """"""""""""""""""""""""
@@ -188,29 +200,29 @@ class Submit_Picture(FlaskForm):
     submit = SubmitField(label='提交')
 
 
-@app.route('/Stroke/<username>', methods=['GET', 'POST'])
+@app.route('/Stroke<username>', methods=['GET', 'POST'])
 def Stroke(username):
     form = Submit_Picture()
     if request.method == 'POST':
-        PictureName = request.form['PictureName']
+        if 'modify' not in request.form:
+            return '未正确上传图片'
         Picture = request.files['SubmitPicture']
         Time = time.localtime()
         CreateTime = time.strftime("%Y-%m-%d %H:%M:%S", Time)
         if Picture:
-            is_Exist_Same_Name = PictureSet.query.filter_by(username=username, PictureName=PictureName).count()
+            is_Exist_Same_Name = PictureSet.query.filter_by(username=username, PictureName=Picture.filename).count()
             if is_Exist_Same_Name == 0:
                 try:
-                    new_picture = PictureSet(username=username, Picture=Picture, PictureName=PictureName,
-                                             CreateTime=CreateTime)
+                    new_picture = PictureSet(username=username, Picture=Picture, PictureName=Picture.filename
+                                             , CreateTime=CreateTime)
                     db.session.add(new_picture)
                     db.session.commit()
                     flash('上传成功！请耐心等待！')
-
                     # 图片上传至后端
                     # 返回 ret_map
-                    # Back_End.start_project(Picture, username, PictureName)
+                    # Back_End.start_project(Picture, username, Picture.filename)
 
-                    return redirect(url_for('DIY', username=username, PictureName=PictureName))
+                    return redirect(url_for('DIY', username=username, PictureName=Picture.filename))
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
                     db.session.rollback()
@@ -219,9 +231,47 @@ def Stroke(username):
                 db.session.rollback()
         else:
             flash('请上传图片！')
-    # if request.method == 'POST':
+        # if request.method == 'POST':
 
     return render_template('Stroke.html', form=form, username=username)
+
+
+""""""""""""""""""""""""
+""" 这里是存放历史的代码 """
+""""""""""""""""""""""""
+
+
+@app.route('/history<username>', methods=['GET', 'POST'])
+def history(username):
+    base_path = f"static/data/{username}"
+    has_work = True
+    has_history = True
+    # 将所有的作品文件的名字获取
+    file_names = []
+    file = os.listdir(base_path + "/GIF")
+    # file.sort(key=lambda x: int(x.split('.')[0]))
+    for filename in os.listdir(base_path + "/GIF"):
+        if filename.endswith('.gif'):
+            file_names.append(filename)
+    if len(file_names) == 0:
+        print("无作品目前")
+        has_work = False
+    data_list = []
+    # gif = History.query.filter_by(username=username).all()[0]
+    # gif_data = base64.b64encode(gif.Picture).decode('utf-8')
+    # print(gif_data)
+    gif_all = History.query.filter_by(username=username).all()
+    if len(gif_all) == 0:
+        print("无作品")
+        has_history = False
+    for i in range(len(gif_all)):
+        gif = gif_all[i]
+        gif_data = base64.b64encode(gif.Picture).decode('utf-8')
+        data_list.append(gif_data)
+        # print(gif_data)
+    # return render_template('history.html', username=username, file_names=file_names, picture_list=gif_data)
+    return render_template('history.html', username=username, file_names=file_names,
+                           picture_list=data_list, has_work=has_work, has_history=has_history)
 
 
 """"""""""""""""""""""""
@@ -235,10 +285,9 @@ def DIY(username, PictureName):
     picture_folder = f'static/data/{username}/Short_Skeleton'
     picture_path = os.listdir(picture_folder)
     picture_number = len(picture_path)
-    # picture_name =
-    data = request.data
-    print(data)
+    base_path = f'static/data/{username}'
     # print(picture_path)
+    # Stroke_Video_Generation.start_generate(username, PictureName, )
     with open(f'static/data/{username}/Short_Skeleton_data.csv', "r") as f:
         reader = csv.reader(f)
         # ret_map = csv.reader(f)
@@ -246,6 +295,43 @@ def DIY(username, PictureName):
     ret_map = ret_map.reshape(-1)
     # data = request.json
     # print(type(ret_map))
+
+    # picture_name =
+    if request.method == 'POST':
+        data = bytes.decode(request.data)[10: -2]
+
+        index = data.index(',[')
+        this_picture_number = int(data[:index])
+        # 将字符串处理成二维数组
+        stroke_string = data[index + 1:]
+        stroke = eval(stroke_string)
+        # print(stroke_string)
+        # print(stroke)
+        Stroke_Video_Generation.start_generate(username, PictureName, picture_number, base_path, this_picture_number,
+                                               stroke)
+        gif_path = base_path + '/GIF'
+        id = 0
+        t = 0
+        if this_picture_number + 1 == picture_number:
+            for i in range(len(os.listdir(gif_path))):
+                try:
+                    with open(gif_path + f'/{i}.gif', 'rb') as f:
+                        image = f.read()
+                        new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image)
+                        id += 1
+                        t += 1
+                        print(t)
+                        db.session.add(new_image)
+                except:
+                    with open(gif_path + f'/{PictureName}.gif', 'rb') as f:
+                        image = f.read()
+                        new_image = History(username=username, picture_name=PictureName, picture_id=id, Picture=image)
+                        id += 1
+                        t += 1
+                        print(t)
+                        db.session.add(new_image)
+            db.session.commit()
+
     return render_template('DIY.html', username=username, picture_folder=picture_folder, picture_number=picture_number,
                            pitcure_path=picture_path, Stroke_Map=ret_map, PictureName=PictureName)
 
@@ -261,14 +347,16 @@ def contact():
     return render_template('contact.html')
 
 
-""""""""""""""""""""""""
-""" 这里是存放历史的代码 """
-""""""""""""""""""""""""
+# 了解更多
+@app.route('/more_info')
+def more_info():
+    return render_template('more_info.html')
 
 
-@app.route(f'/history/<username>')
-def history(username):
-    return render_template('history.html', username=username)
+# 成品展示
+@app.route('/masterpiece')
+def masterpiece():
+    return render_template('masterpiece.html')
 
 
 """"""""""""""""""""""""
@@ -277,4 +365,5 @@ def history(username):
 
 if __name__ == '__main__':
     bootstrap.init_app(app)
+    app.json.ensure_ascii = False  # 解决中文乱码问题
     app.run(debug=True)

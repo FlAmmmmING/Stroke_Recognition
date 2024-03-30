@@ -2,37 +2,26 @@
 <html lang="en">
 
 <head>
-    <meta charset="GBK">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MORKER-开始！</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
     <style>
-        input {
-            /*display: block;*/
-            width: 100%;
-            margin-bottom: 20px;
-            border: 0;
-            padding: 5px;
-            /*border-bottom: 1px solid rgb(128, 125, 125);*/
-            font-size: 15px;
-            /*outline: none;*/
-        }
-        input::placeholder {
-            text-transform: uppercase;
-        }
-        .btn {
-            text-align: center;
-            padding: 10px;
-            font-size: 25px;
-            height: 50px;
-            width: 100%;
+        .form-style-button {
+            /*text-align: center;*/
+            /*padding: 10px;*/
+            font-size: 20px;
+            height: 40px;
+            width: 100px;
             margin-top: 40px;
-            background-image: linear-gradient(to right, #b920e3, #d94721);
+            background-image: linear-gradient(to right, #f5595b, #ff0000);
             color: #fff;
         }
-        .btn:hover {
+
+        .form-style-button:hover {
             background-image: linear-gradient(to left, #ffd926, #275ce1);
         }
+
         .signup_success {
             text-align: center;
             font-size: 10px;
@@ -41,6 +30,7 @@
             background-image: linear-gradient(to right, #80ce6e, #1169d7);
             color: #fff;
         }
+
         .signup_found_no_user {
             text-align: center;
             font-size: 10px;
@@ -49,6 +39,7 @@
             background-image: linear-gradient(to right, #9f15c7, #0c16dc);
             color: #fff;
         }
+
         .signup_wrong_password {
             text-align: center;
             font-size: 10px;
@@ -57,115 +48,158 @@
             background-image: linear-gradient(to right, #ffd200, #dc0c0c);
             color: #fff;
         }
+
         .SubmitPicture {
             font-size: 25px;
+        }
+
+        .title {
+            font-family: "华文楷体";
+            font-size: 30px;
+        }
+
+        .Stroke-body {
+            text-align: center;
+        }
+
+        .form-style-Stroke {
+            position: absolute;
+            top: 300px;
+            left: 700px;
+            margin-top: 20px;
+            width: 300px;
+            height: 200px;
+        }
+
+        .form-style-button-position {
+            position: absolute;
+            top: 450px;
+            margin-top: 20px;
+            left: 800px;
+        }
+
+        .preview_position {
+            position: absolute;
+            left: 100px;
+            width: 550px;
+            height: 550px;
+            background-color: #ffffff97;
+        }
+
+        .preview_position img {
+            width: 550px;
+            height: auto;
+        }
+
+        .preview_position_video {
+            position: absolute;
+            left: 1100px;
+            width: 550px;
+            height: 550px;
+            background-color: #ffffff97;
+        }
+
+        .box1 {
+            position: fixed;
+            margin-top: 0;
+            width: 100%;
+            height: 100%;
+            /*background-image: linear-gradient(to right,  #ffffff, #fd3f3f);*/
+            background-image: url("imgs/background/background_for_signup.jpg");
+            background-size: cover;
         }
     </style>
 </head>
 {% import "bootstrap/wtf.html" as wtf %}
 <body>
-<div class="top-head">
-    <ul class="left-entry">
-        <li class="v-popover-wrap"><a href="/"><img
-                src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
-                style="margin-top: 10px; margin-left: 10px;"></a></li>
-        <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
-        {#
-        <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
-        #}
-        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">我的历史</a></span></li>
-    </ul>
-</div>
-<div class="searchingpage" style="height: 800px;">
+<div class="box1">
+    <div class="top-head">
+        <ul class="left-entry">
+            <li class="v-popover-wrap"><a href="/"><img
+                    src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                    style="margin-top: 10px; margin-left: 10px;"></a></li>
+            <li class="v-popover-wrap"><span><a href="/">首页</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/more_info">了解更多</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/masterpiece">成品展示</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
+            <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
+        </ul>
+    </div>
+<div class="Stroke-body">
     <br><br><br><br><br><br>
     {% if get_flashed_messages()[0] == '上传成功！请耐心等待！' %}
-                 <button type="button" class="signup_success" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    <button type="button" class="signup_success" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
     {% endif %}
     {% if get_flashed_messages()[0] == '有相同名字的图片！' %}
-             <button type="button" class="signup_found_no_user" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    <button type="button" class="signup_found_no_user" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
     {% endif %}
-    {% if get_flashed_messages()[0] == '请上传图片！' or get_flashed_messages()[0] == '上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规' %}
-             <button type="button" class="signup_wrong_password" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
+    {% if get_flashed_messages()[0] == '请上传图片！' or get_flashed_messages()[0] == '上传失败，可能的原因是：1.上传的图片格式非jpg
+    2.图片过大 3.图片不合规' %}
+    <button type="button" class="signup_wrong_password" data-dismiss="alert">{{ get_flashed_messages()[0] }}</button>
     {% endif %}
-    <div class="title">请在这里提交您需要的作品</div>
-    <div class="write" style="font-size: 20px;">提交后可能会等待一些时间，请勿退出</div>
+    <div class="title" style="font-size: 80px; font-family: 华文楷体">墨韵踪迹</div>
+    <div class="write" style="font-size: 20px;"></div>
     <br><br>
-    <hr class="line">
     <br><br>
-<!--    <form method="post">-->
-<!--        {{ form.hidden_tag() }}-->
-<!--        {{ form.PictureName.label }}&nbsp{{form.PictureName}}-->
-<!--        <br><br>-->
-<!--        <div class="SubmitPicture">{{ form.SubmitPicture.label }}</div>-->
-<!--        <div>{{ form.SubmitPicture }}</div>-->
-<!--        {{ form.submit }}-->
-<!--    </form>-->
-    {{ wtf.quick_form(form) }}
-    <br><br>
-    <hr class="line">
-    <br><br><br>
-    <p>提交后将转移至笔画DIY界面</p>
-
-<!--    <form>-->
-<!--        <table class="write">-->
-<!--            <tbody>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">投递作者：<input type="text" name="1"></p><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">邮&nbsp&nbsp箱：<input type="text" name="1"></p><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">电&nbsp&nbsp话：<input type="text" name="1"></p><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">&nbspGithub：<input type="text" name="1"></p><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">请选择您的作品种类：&nbsp&nbsp转载&nbsp<input type="radio" name="1"-->
-<!--                                                                                            style="height:15px; width:20px">&nbsp&nbsp&nbsp自制&nbsp<input-->
-<!--                            type="radio" name="1"-->
-<!--                            style="height:15px; width:20px"></p>-->
-<!--                    <br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    <p style="font-size: 20px">请上传您的作品：<input type="file" name="1"></p><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                    您可以在这里介绍您的作品<br><br>-->
-<!--                    <p style="font-size: 20px"><textarea name="1"-->
-<!--                                                         style="width: 500px; height: 300px; resize: none"></textarea>-->
-<!--                    </p>-->
-<!--                    <br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                <tr>-->
-<!--                            <span style="font-size: 20px"><input type="submit" style="width: 100px; height:30px"-->
-<!--                                                                 name="1" value="确定"-->
-<!--                                                                 onclick="javascript:alert('上传成功');"></span>-->
-<!--                    &nbsp&nbsp&nbsp&nbsp-->
-<!--                    <span style="font-size: 20px"><input type="reset" style="width: 100px; height:30px" name="1"-->
-<!--                                                         value="取消"></span><br><br>-->
-<!--                </tr>-->
-<!--            </th>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </form>-->
-
+    <form method="post" enctype="multipart/form-data" class="form-style-Stroke">
+        <!--             <input type="file" name='SubmitPicture' placeholder="上传jpg图片" >-->
+        <input type="file" name="SubmitPicture" id="file" style="display: none;">
+        <label for="file"
+               style="padding: 10px 20px; border: 1px solid #3f3e3e; cursor: pointer; background-color: #fdfdfd">选择范本作品</label>
+        <br><br>
+        <div id="file-name"></div>
+        <button type="submit" name="modify" class="form-style-button">骨架修改</button>
+    </form>
+    <div id="image-preview" class="preview_position">上传的图片会显示在这里</div>
+    <div id="video-generation" class="preview_position_video">上传图片后点击生成视频，这里会显示书法作品复现</div>
+    <form enctype="multipart/form-data" id="upload-form">
+        <!-- 用于显示所选文件的图片预览区域 -->
+        <button type="submit" name="update" class="form-style-button-position form-style-button">生成视频</button>
+    </form>
+</div>
 </div>
 </body>
+<script>
+    // 获取文件输入字段和显示文件名称的元素
+    const fileInput = document.getElementById('file');
+    const fileNameDisplay = document.getElementById('file-name');
+    const imagePreview = document.getElementById('image-preview');
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = "\n" + fileInput.files[0].name;
+        } else {
+            fileNameDisplay.textContent = '';
+        }
+    });
+
+    fileInput.addEventListener('change', function () {
+        // 如果有文件被选择
+        if (fileInput.files.length > 0) {
+            // 获取用户选择的文件
+            const file = fileInput.files[0];
+
+            // 创建 FileReader 对象来读取文件
+            const reader = new FileReader();
+
+            // 当读取完成时执行的函数
+            reader.onload = function (event) {
+                // 创建一个新的图片元素并设置其 src 属性为读取到的文件数据
+                const img = document.createElement('img');
+                img.src = event.target.result;
+
+                // 将图片元素添加到预览区域中
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(img);
+            };
+
+            // 读取文件
+            reader.readAsDataURL(file);
+        } else {
+            // 如果没有文件被选择，则清空预览区域
+            imagePreview.innerHTML = '';
+        }
+    });
+</script>
 </html>

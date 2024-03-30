@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORKER-作品展示</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <style>
+        input {
+            /*display: block;*/
+            width: 100%;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 5px;
+            /*border-bottom: 1px solid rgb(128, 125, 125);*/
+            font-size: 15px;
+            /*outline: none;*/
+        }
+        input::placeholder {
+            text-transform: uppercase;
+        }
+        .btn {
+            text-align: center;
+            padding: 10px;
+            font-size: 25px;
+            height: 50px;
+            width: 100%;
+            margin-top: 40px;
+            background-image: linear-gradient(to right, #b920e3, #d94721);
+            color: #fff;
+        }
+        .btn:hover {
+            background-image: linear-gradient(to left, #ffd926, #275ce1);
+        }
+        .signup_success {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #80ce6e, #1169d7);
+            color: #fff;
+        }
+        .signup_found_no_user {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #9f15c7, #0c16dc);
+            color: #fff;
+        }
+        .signup_wrong_password {
+            text-align: center;
+            font-size: 10px;
+            height: 30px;
+            width: 100%;
+            background-image: linear-gradient(to right, #ffd200, #dc0c0c);
+            color: #fff;
+        }
+        .SubmitPicture {
+            font-size: 25px;
+        }
+    </style>
+</head>
+{% import "bootstrap/wtf.html" as wtf %}
+<body>
+<div class="top-head">
+    <ul class="left-entry">
+        <li class="v-popover-wrap"><a href="/"><img
+                src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                style="margin-top: 10px; margin-left: 10px;"></a></li>
+        <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
+        {#
+        <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
+        #}
+        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">历史与作品</a></span></li>
+    </ul>
+</div>
+<div class="searchingpage" style="height: auto; min-height: 1000px;">
+    <br><br><br><br><br><br>
+    <div style="font-size: 40px">作品展示</div>
+    <div id="masterpieces"></div>
+    <div style="font-size: 40px">我的历史</div>
+    <div id="myhistory"></div>
+
+
+</div>
+</body>
+<script>
+    let file_name_arr = '{{ file_names }}';
+    file_name_arr = file_name_arr.replaceAll("&#39;","");
+    file_name_arr = file_name_arr.slice(1, -1);
+    file_name_arr = file_name_arr.split(',');
+    console.log(file_name_arr);
+    let username = '{{ username }}';
+    let PictureName = '{{ PictureName }}';
+    let has_work = '{{ has_work }}';
+    let has_history = '{{ has_history }}';
+    // let picture_list = '{{ picture_list }}';
+    let picture_list = '{{ picture_list }}'.replaceAll("&#39;","").slice(1, -1).split(", ");
+    // console.log(picture_list);
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/history.js') }}"></script>
+</html>

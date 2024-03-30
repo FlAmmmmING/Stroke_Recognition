@@ -1,6 +1,15 @@
-
 const N = 100;
 const pixel_size = 8;
+
+var isClicked = false;
+var isDrawing = false;
+let start_x, start_y, end_x, end_y;
+
+// 空间控制
+let radio1 = document.getElementById("a1");
+let radio6 = document.getElementById("a6");
+let radio3 = document.getElementById("a3");
+
 // 优先级设置
 let dx = [-1, -1, 1, 1, 1, -1, 0, 0];
 let dy = [1, -1, 1, -1, 0, 0, 1, -1];
@@ -27,6 +36,8 @@ init();
 
 // 存放的是笔画的像素点坐标
 var ret_arr = [];
+// 存放的是所有的笔画像素点
+var full_character = [];
 let radioButtons = document.querySelectorAll('input[type="radio"][name="modify"]');
 radioButtons.forEach(function (radioButton) {
     radioButton.addEventListener('click', function () {
@@ -38,6 +49,7 @@ radioButtons.forEach(function (radioButton) {
                 canvas.removeEventListener('click', option3);
                 canvas.removeEventListener('click', option6);
                 canvas.removeEventListener('click', click_stroke);
+                isClicked = false;
                 inv_available_start_point()
                 break;
             // case 'action2':
@@ -48,11 +60,12 @@ radioButtons.forEach(function (radioButton) {
             // console.log("执行2号");
             // break;
             case 'action3':
+                canvas.addEventListener('click', option3);
                 canvas.removeEventListener('click', option1);
                 // canvas.removeEventListener('click', option2);
-                canvas.addEventListener('click', option3);
                 canvas.removeEventListener('click', option6);
                 canvas.removeEventListener('click', click_stroke);
+                isClicked = false;
                 inv_available_start_point()
                 // console.log("执行3号");
                 break;
@@ -75,11 +88,12 @@ radioButtons.forEach(function (radioButton) {
             //     // console.log("执行5号");
             //     break;
             case 'action6':
+                canvas.addEventListener('click', option6);
                 canvas.removeEventListener('click', option1);
                 // canvas.removeEventListener('click', option2);
                 canvas.removeEventListener('click', option3);
-                canvas.addEventListener('click', option6);
                 canvas.removeEventListener('click', click_stroke);
+                isClicked = false;
                 inv_available_start_point()
                 // console.log("执行5号");
                 break;
@@ -94,7 +108,7 @@ function init() {
     isDrawing = false;
     isClicked = false;
     // 清除history_rollback()
-    generate_stroke.textContent = "笔画方向顺序确定";
+    generate_stroke.textContent = "笔画方向笔画方向顺序指定(Ctrl+Q)";
     history_rollback = [];
     // 清除当前笔画
     ret_arr = [];
@@ -122,17 +136,18 @@ function init() {
             // str += map[i][j].toString() + ' ';
         }
         // console.log(str);
-        let first = document.getElementById("back");
+        // let first = document.getElementById("back");
         let last = document.getElementById("upload");
-        if (cnt === N * N) {
-            first.textContent = "这已经是第一张图片";
+        // if (cnt === N * N) {
+        //     first.textContent = "这已经是第一张图片";
+        // } else {
+        //     first.textContent = "退回至上一个图片";
+        // }
+        if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100)) {
+            // last.textContent = "跳转至历史界面(Ctrl+Y)";
+            last.textContent = "上传骨架，生成视频(Ctrl+Y)";
         } else {
-            first.textContent = "退回至上一个图片";
-        }
-        if (cnt === Stroke_Data_Full.length) {
-            last.textContent = "跳转至生成界面";
-        } else {
-            last.textContent = "上传骨架，生成视频";
+            last.textContent = "上传骨架，生成视频(Ctrl+Y)";
         }
     }
 }
@@ -190,7 +205,6 @@ function single_pixel_modify(x, y) {
         console.log("is: " + (255 - map[Math.floor(x / pixel_size)][Math.floor(y / pixel_size)]));
         generate_current_picture();
     }
-
 }
 
 // function skeleton_bridge(x, y) {
@@ -282,9 +296,6 @@ function option3(event) {
     delete_skeleton(x, y);
 }
 
-var isClicked = false;
-var isDrawing = false;
-let start_x, start_y, end_x, end_y;
 
 function option6(event) {
     let x = event.clientX - canvas.getBoundingClientRect().left;
@@ -339,58 +350,53 @@ let rollback = document.getElementById('roll_back');
 rollback.addEventListener('click', function () {
     if (history_rollback.length === 0) return;
     console.log(history_rollback.length);
-    map = history_rollback.pop();
+    let history = history_rollback.pop();
+    map = history[0];
+    ret_arr = history[1];
     generate_current_picture();
 })
 
 // 添加历史
 function add_history() {
-    history_rollback.push(deepCopy(map));
+    history_rollback.push([deepCopy(map), deepCopy(ret_arr)]);
     console.log("adding");
 }
 
-let back = document.getElementById('back');
-back.addEventListener('click', function () {
-    if (cnt === N * N) {
-        console.log("已经是第一张了");
-        return;
-    }
-    cnt -= 2 * N * N;
+let next = document.getElementById('next');
+next.addEventListener('click', function () {
+    picture_number++;
     init();
 })
 
 let upload = document.getElementById('upload');
 upload.addEventListener('click', function (event) {
+    if (ret_arr.length === 0) {
+        alert("不可上传！您没有指定任何笔画顺序！");
+        return;
+    }
+    full_character.push(ret_arr)
     fetch("/Stroke/DIY/" + Username + '/' + PictureName, {
         method: 'POST',
-        body: ret_arr
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({array: [picture_number, ret_arr]})
     }).then(response => response.text()).then(data => {
         // console.log(data);
-        alert("提交成功！正在生成这个文字的视频！");
+        if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100))
+                alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+            else
+                alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
     }).catch(error => {
         console.error('Error: ', error);
     })
-    if (cnt === Stroke_Data_Full.length) {
-        console.log("这是最后一张");
-        return ret_arr;
+    if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100)) {
+        console.log("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+        return;
     }
+    picture_number++;
     init();
-    // fetch('Stroke/DIY/', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(ret_arr), // 传递给 Python 的数据
-    // })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log(data.result); // 输出 Python 返回的结果
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //     });
 })
-
 
 function available_start_point() {
     for (let i = 0; i < N; i++) {
@@ -413,8 +419,7 @@ function available_start_point() {
 }
 
 function inv_available_start_point() {
-    document.getElementById('generate_stroke').textContent = "笔画方向顺序指定";
-    history_rollback = [];
+    document.getElementById('generate_stroke').textContent = "笔画方向顺序指定(Ctrl+Q)";
     for (let i = 0; i < N; i++) {
         for (let j = 0; j < N; j++) {
             // console.log(st[i][j]);
@@ -457,7 +462,7 @@ function click_stroke(event) {
     x = Math.floor(x / pixel_size);
     y = Math.floor(y / pixel_size);
     if (map[x][y] !== 5) return;
-    history_rollback.push(deepCopy(map));
+    history_rollback.push([deepCopy(map), deepCopy(ret_arr)]);
     console.log("yes");
     let q = [];
     q.push([x, y]);
@@ -492,15 +497,105 @@ generate_stroke.addEventListener("click", function () {
     canvas.removeEventListener('click', option6);
     if (!isClicked) {
         available_start_point();
+        radio1.checked = false;
+        radio6.checked = false;
+        radio3.checked = false;
         canvas.addEventListener('click', click_stroke);
         generate_stroke.textContent = "继续微调骨架";
     } else {
         inv_available_start_point();
         canvas.removeEventListener('click', click_stroke);
-        generate_stroke.textContent = "笔画方向顺序指定";
+        generate_stroke.textContent = "笔画方向顺序指定(Ctrl+Q)";
     }
     isClicked ^= 1;
 })
+
+// 键盘监听
+document.addEventListener('keydown', function (event) {
+    if ((event.key === 'q' || event.key === 'Q') && event.ctrlKey) {
+        canvas.removeEventListener('click', option1);
+        canvas.removeEventListener('click', option3);
+        canvas.removeEventListener('click', option6);
+        if (!isClicked) {
+            available_start_point();
+            let radio1 = document.getElementById("a1");
+            let radio6 = document.getElementById("a6");
+            let radio3 = document.getElementById("a3");
+            radio1.checked = false;
+            radio6.checked = false;
+            radio3.checked = false;
+            canvas.addEventListener('click', click_stroke);
+            generate_stroke.textContent = "继续微调骨架";
+        } else {
+            inv_available_start_point();
+            canvas.removeEventListener('click', click_stroke);
+            generate_stroke.textContent = "笔画方向顺序指定(Ctrl+Q)";
+        }
+        isClicked ^= 1;
+    } else if ((event.key === 'y' || event.key === 'Y') && event.ctrlKey) {
+        if (ret_arr.length === 0) {
+            alert("不可上传！您没有指定任何笔画顺序！");
+            return;
+        }
+        full_character.push(ret_arr)
+        fetch("/Stroke/DIY/" + Username + '/' + PictureName, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({array: [picture_number, ret_arr]})
+        }).then(response => response.text()).then(data => {
+            // console.log(data);
+            if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100))
+                alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+            else
+                alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
+        }).catch(error => {
+            console.error('Error: ', error);
+        })
+        if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100)) {
+            console.log("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+            return;
+        }
+        picture_number++;
+        init();
+    } else if ((event.key === 'z' || event.key === 'Z') && event.ctrlKey) {
+        if (history_rollback.length === 0) return;
+        console.log(history_rollback.length);
+        let history = history_rollback.pop();
+        map = history[0];
+        ret_arr = history[1];
+        generate_current_picture();
+    } else if ((event.key === 'r' || event.key === 'R') && event.ctrlKey) {
+        cnt -= N * N;
+        init();
+    } else if (event.key === '1') {
+        canvas.addEventListener('click', option1);
+        canvas.removeEventListener('click', option3);
+        canvas.removeEventListener('click', option6);
+        canvas.removeEventListener('click', click_stroke);
+        radio1.checked = true;
+        inv_available_start_point();
+        isClicked = false;
+    } else if (event.key === '2') {
+        canvas.removeEventListener('click', option1);
+        canvas.removeEventListener('click', option3);
+        canvas.addEventListener('click', option6);
+        canvas.removeEventListener('click', click_stroke);
+        radio6.checked = true;
+        inv_available_start_point();
+        isClicked = false;
+    } else if (event.key === '3') {
+        canvas.removeEventListener('click', option1);
+        canvas.addEventListener('click', option3);
+        canvas.removeEventListener('click', option6);
+        canvas.removeEventListener('click', click_stroke);
+        radio3.checked = true;
+        inv_available_start_point();
+        isClicked = false;
+    }
+});
+
 
 // 深拷贝
 function deepCopy(obj) {
