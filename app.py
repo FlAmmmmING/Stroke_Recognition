@@ -220,7 +220,7 @@ def Stroke(username):
                     flash('上传成功！请耐心等待！')
                     # 图片上传至后端
                     # 返回 ret_map
-                    Back_End.start_project(Picture, username, Picture.filename)
+                    # Back_End.start_project(Picture, username, Picture.filename)
                     return redirect(url_for('DIY', username=username, PictureName=Picture.filename))
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")
@@ -278,7 +278,7 @@ def history(username):
 """"""""""""""""""""""""
 
 
-@app.route('/Stroke/DIY/<username>/<PictureName>', methods=['GET', 'POST'])
+@app.route('/Stroke<username>DIY<PictureName>', methods=['GET', 'POST'])
 def DIY(username, PictureName):
     # print(basedir)
     picture_folder = f'static/data/{username}/Short_Skeleton'
@@ -295,6 +295,7 @@ def DIY(username, PictureName):
     # data = request.json
     # print(type(ret_map))
 
+
     # picture_name =
     if request.method == 'POST':
         data = bytes.decode(request.data)[10: -2]
@@ -304,10 +305,21 @@ def DIY(username, PictureName):
         # 将字符串处理成二维数组
         stroke_string = data[index + 1:]
         stroke = eval(stroke_string)
+        # print(stroke)
+        # path = "model"
+        # now_stroke = stroke[0]
+        #  for item in now_stroke:
+        #     for peixl in item:
+        #         peixl += d[number]
+        # with open(path + f"/{number}.txt", 'w') as file:
+        #     # 向文件中写入内容
+        #     file.write(now_stroke)
+        # number += 1
         # print(stroke_string)
         # print(stroke)
         Stroke_Video_Generation.start_generate(username, PictureName, picture_number, base_path, this_picture_number,
                                                stroke)
+
         picture_list = base_path + '/Cutting'
         with open(picture_list + f'/{this_picture_number}.jpg', 'rb') as f:
             image = f.read()

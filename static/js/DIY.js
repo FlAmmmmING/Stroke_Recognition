@@ -375,7 +375,7 @@ upload.addEventListener('click', function (event) {
         return;
     }
     full_character.push(ret_arr)
-    fetch("/Stroke/DIY/" + Username + '/' + PictureName, {
+    fetch("/Stroke" + Username + 'DIY' + PictureName, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -384,9 +384,9 @@ upload.addEventListener('click', function (event) {
     }).then(response => response.text()).then(data => {
         // console.log(data);
         if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100))
-                alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
-            else
-                alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
+            alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+        else
+            alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
     }).catch(error => {
         console.error('Error: ', error);
     })
@@ -538,7 +538,7 @@ document.addEventListener('keydown', function (event) {
             return;
         }
         full_character.push(ret_arr)
-        fetch("/Stroke/DIY/" + Username + '/' + PictureName, {
+        fetch("/Stroke" + Username + 'DIY' + PictureName, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

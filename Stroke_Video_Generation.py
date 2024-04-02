@@ -13,8 +13,16 @@ import queue
 import os
 import Generate_full_Video
 
+# 专门用于生成书法毛笔视频的
+size = 100
+# 相对位置数组
+d = [(size * 0, size * 3), (size * 1, size * 3), (size * 2, size * 3), (size * 3, size * 3), (size * 4, size * 3),
+     (size * 0, size * 2), (size * 1, size * 2), (size * 2, size * 2), (size * 3, size * 2), (size * 4, size * 2),
+     (size * 0, size * 1), (size * 1, size * 1), (size * 2, size * 1), (size * 3, size * 1), (size * 4, size * 1),
+     (size * 0, size * 0), (size * 1, size * 0), (size * 2, size * 0), (size * 3, size * 0), (size * 4, size * 0)]
 
-def get_radius_2(item, dir_x, dir_y, original_img, core, pre_radius, idx, Stroke):
+
+def get_radius_2(dir_x, dir_y, original_img, core, pre_radius, idx, Stroke):
     # 备案2 —— 按照轨迹方向确定半径
     # 这种方法较为冒险，可能会出现笔画崩溃的现象，但是它有良好的覆盖性
     # 这里改良一下，这个算法依然无法很好地解决笔画交点的错乱现象
@@ -33,8 +41,9 @@ def get_radius_2(item, dir_x, dir_y, original_img, core, pre_radius, idx, Stroke
     for i in range(len(Stroke)):
         if i == idx:
             continue
-        for j in range(len(Stroke[i])):
-            if abs(item[0] - Stroke[i][j][0]) <= 2 or abs(item[1] - Stroke[i][j][1]) <= 2:
+        this_stroke = Stroke[i]
+        for pixel in this_stroke:
+            if abs(core[0] - pixel[0]) <= 2 or abs(core[1] - pixel[1]) <= 2:
                 return pre_radius
 
     radius_x = 0
@@ -92,9 +101,9 @@ def get_radius_2(item, dir_x, dir_y, original_img, core, pre_radius, idx, Stroke
     radius = max(radius_x, radius_y)
     # if dir_x * dir_y:
     #     radius = round(radius * 1.4142135623730951)
-    # if radius - pre_radius > 4:
-    #     # 判断笔画是否出现崩溃现象
-    #     radius = pre_radius
+    if radius - pre_radius >= 2:
+        # 判断笔画是否出现崩溃现象
+        radius = pre_radius
     return radius
 
 
@@ -205,8 +214,7 @@ def generate_fps(template_img, original_img, Stroke, Save_dir):
                 radius = get_radius_1(original_img, item[i])
             else:
                 dir_x, dir_y = item[i][0] - item[i - 1][0], item[i][1] - item[i - 1][1]
-                radius = get_radius_2(item[i], dir_x, dir_y, original_img, item[i], radius, stroke_number, Stroke)
-                stroke_number += 1
+                radius = get_radius_2(dir_x, dir_y, original_img, item[i], radius, stroke_number, Stroke)
             print(f"圆心：({item[i][0]}, {item[i][1]}), 半径: {radius}")
             # 开始分帧
             cnt += 1
@@ -229,6 +237,8 @@ def generate_fps(template_img, original_img, Stroke, Save_dir):
                     q.put((next_x, next_y))
                     visit_map[next_x, next_y] = True
             cv2.imwrite(Save_dir + "/" + f"{cnt}.jpg", iter_img)
+        stroke_number += 1
+
 
 
 #
@@ -311,13 +321,20 @@ def Stroke_Video_Generation(Base_path, Picture, Stroke):
     # 预处理Stroke
     # Stroke = Stroke.split(',')
     # print(Stroke)
+    printing_stroke = []
     available_stroke = []
     for item in Stroke:
         process_stroke = []
+        a_printing_stroke = []
         for pixel in item:
             process_stroke.append([pixel[1], pixel[0]])
+            a_printing_stroke.append([pixel[1] + d[Picture][0], pixel[0] + d[Picture][1], 0])
         available_stroke.append(process_stroke)
+        printing_stroke.append(a_printing_stroke)
     print(available_stroke)
+    with open(f"model/arr/{Picture}.txt", 'w') as f:
+        f.write(str(printing_stroke))
+
     Save_fps_dir = Base_path + f"/Generate_Video/{Picture}"
     Save_dir_video = Base_path + "/Video"
     Save_dir_gif = Base_path + "/GIF"
@@ -330,5 +347,6 @@ def start_generate(username, PictureName, total_picture, base_path, picture_numb
     # if picture_number == total_picture - 1:
     #     Generate_full_Video.start_Full_Video(base_path, PictureName)
 
+
 # if __name__ == '__main__':
-#     start_generate(202110310195, 1, "static/data/202110310195", 0,[])
+#     start_generate(202110310195, 1, 16, "static/data/202110310195", 0, [])

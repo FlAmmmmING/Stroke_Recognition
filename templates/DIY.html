@@ -12,6 +12,15 @@
             width: 20px;
             height: 20px;
         }
+
+        .diypage {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            /*background-image: linear-gradient(to right,  #ffffff, #fd3f3f);*/
+            background-image: url("imgs/background/background_for_signup.jpg");
+            background-size: cover;
+        }
     </style>
 </head>
 {% import "bootstrap/wtf.html" as wtf %}
@@ -21,26 +30,25 @@
         <li class="v-popover-wrap"><a href="/"><img
                 src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
                 style="margin-top: 10px; margin-left: 10px;"></a></li>
+        <li class="v-popover-wrap"><span><a href="/">首页</a></span></li>
+        <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
+        <li class="v-popover-wrap"><span><a href="/more_info">了解更多</a></span></li>
+        <li class="v-popover-wrap"><span><a href="/masterpiece">成品展示</a></span></li>
+        <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
         <li class="v-popover-wrap"><span>用户：{{ username }}</span></li>
-        {#
-        <li class="v-popover-wrap"><span><a href="">登录</a></span></li>
-        #}
-        <li class="v-popover-wrap"><span><a href="/history/{{ username }}">历史与作品</a></span></li>
     </ul>
 
 </div>
 <div class="diypage" style="height: 100%;">
-    <br><br><br><br><br><br>
-    <div>批量生产书法作品文字（当前墨客默认文字方向是从上到下，从右到左）</div>
+    <br><br><br><br><br>
+    <div>骨架微调操作</div>
     <!--    <div class="generation"></div>-->
-    <br>
     <!--    <div class="edit-picture">-->
     <!--         {% for image in picture_path %}-->
     <!--            <img src="{{ url_for('static', filename='data/202110310195/Short_Skeleton/0.jpg') }}">-->
     <!--        {% endfor %}-->
     <!--        <img class="edit-picture" src = "{{ url_for('static', filename='Temp_Skeleton/0.jpg') }}" >-->
     <!--    </div>-->
-    <br>
     <h2 class="line-diy"></h2>
     <div class="canvas_box">
         <canvas id="c1" class="canvas_position">

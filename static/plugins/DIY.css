@@ -24,13 +24,13 @@ input::placeholder {
 }
 
 .btn {
-    text-align: center;
-    padding: 10px;
-    font-size: 25px;
+    /*text-align: center;*/
+    /*padding: 10px;*/
+    font-size: 20px;
     height: 50px;
-    width: 100%;
+    width: 300px;
     margin-top: 40px;
-    background-image: linear-gradient(to right, #000000, #ffffff);
+    background-image: linear-gradient(to right, #f5595b, #ff0000);
     color: #fff;
 }
 
@@ -96,7 +96,7 @@ input::placeholder {
     /*border: 5px solid black; !* 画布边框样式 *!*/
     position: absolute; /* 设置绝对定位 */
     left: 50px; /* 相对于父元素最左边的位置 */
-    top: 200px;
+    top: 120px;
 }
 
 .canvas_operation {
@@ -165,7 +165,7 @@ input::placeholder {
 }
 
 .ul-style6 {
-     user-select: none;
+    user-select: none;
     position: absolute;
     /*border: 5px solid #de0000; !* 画布边框样式 *!*/
     width: 400px;
