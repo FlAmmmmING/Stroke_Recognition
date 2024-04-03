@@ -3,102 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORKER-招贤纳士</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
+    <title>墨客-招贤纳士</title>
     <style>
-        body {
-			font-family: 'Arial', sans-serif;
-			margin: 0;
-			padding: 0;
-            background-image: url("imgs/background/background_for_mainpage_1.jpg");
+        .top-head {
+            background-color: #ffffff;
+            /*padding: 10px 0;*/
+        }
+
+
+        .content {
+            padding: 150px;
+            /*text-align: center;*/
+            background-image: url("imgs/background/background_for_contact.jpg");
             background-size: cover;
-		}
+            height: 1600px;
+            /*height: 100%;*/
+        }
 
-		.top-head {
-			background-color: #ffffff;
-			padding: 10px 0;
-		}
+        .contact-info-1 {
+            position: absolute;
+            left: 100px;
+            margin: 40px auto;
+            /*border: 2px solid red;*/
+            width: 800px;
+            height: 500px;
+            border-collapse: collapse;
+        }
 
-		.nav-menu {
-			list-style: none;
-			display: flex;
-			justify-content: start;
-			align-items: center;
-			padding-left: 20px;
-		}
+        .this-page-writing {
+            font-size: 40px;
+            margin-top: 30px;
+            line-height: 1.75;
+        }
 
-		.nav-menu li {
-			margin-right: 20px;
-		}
+        h1 {
+            color: #333;
+        }
 
-		.nav-menu li a {
-			color: white;
-			text-decoration: none;
-			font-size: 16px;
-		}
+        p {
+            font-size: 16px;
+            color: #666;
+        }
 
-		.logo {
-			height: 50px;
-		}
+        .contact-info-1-picture {
+            /*border: 2px solid red;*/
+            margin-left: 800px;
+            margin-top: 40px;
+            width: 550px;
+            height: 550px;
+        }
 
-		.content {
-			padding: 20px;
-			text-align: center;
-		}
+        .contact-info-1-picture img {
+            width: 550px;
+            height: 550px;
+        }
 
-		.contact-info {
-			margin: 20px auto;
-			width: 80%;
-			border-collapse: collapse;
-		}
+        .contact-info-2 {
+            position: absolute;
+            /*left: 800px;*/
+            /*margin-top: 20px;*/
+            top: 850px;
+            left: 800px;
+            /*margin: 40px auto;*/
+            /*border: 2px solid red;*/
+            width: 800px;
+            height: 600px;
+            border-collapse: collapse;
+        }
 
-		.contact-info th, .contact-info td {
-			font-size: 18px;
-			padding: 10px;
-			border-bottom: 1px solid #ddd;
-		}
+        .contact-info-2-picture {
+            margin-top: 50px;
+            width: 600px;
+            height: 600px;
+        }
 
-		h1 {
-			color: #333;
-		}
-
-		p {
-			font-size: 16px;
-			color: #666;
-		}
+        .contact-info-2-picture img {
+            width: 600px;
+            height: 600px;
+        }
+        .to-contact {
+            align-content: center;
+            margin-top: 40px;
+            /*border: solid red 2px;*/
+            width: 1500px;
+            height: 400px;
+        }
+        .this-button {
+            /*border: solid red 2px;*/
+            /*width: 100px;*/
+            /*height: 100px;*/
+            margin-left: 150px;
+        }
     </style>
 </head>
 <body>
+<div class="box1">
     <div class="top-head">
-        <ul class="nav-menu">
-            <li><a href="/"><img src="{{ url_for('static', filename='gif/jingyiqiujing.gif') }}" alt="Logo" class="logo"></a></li>
-            <li><<a href="/login">立即体验</a></li>
-            <li><a href="/contact">招贤纳士</a></li>
+        <ul class="left-entry">
+            <li class="v-popover-wrap"><a href="/"><img
+                    src="{{ url_for('static', filename='imgs/source/head/head.jpg') }}"
+                    style="margin-top: 10px; margin-left: 10px;"></a></li>
+            <li class="v-popover-wrap"><span><a href="/">首页</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/login">立即体验</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/more_info">了解更多</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/masterpiece">成品展示</a></span></li>
+            <li class="v-popover-wrap"><span><a href="/contact">招贤纳士</a></span></li>
         </ul>
     </div>
-    <div class="content">
-        <h1>欢迎联系PictureHub!</h1>
-        <p>您可以通过以下方式联系到这个网站的制作者：</p>
-        <table class="contact-info">
-            <tbody>
-				<tr><th>&nbsp&nbsp&nbsp&nbsp制作者：蒋玮杰 上海海事大学</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbsp邮箱：202110310195@shmtu.edu.cn 或者 2196607709@qq.com</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbsp电话：+86 13917734176</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbspGithub：Flammmming</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbsp地址：中国上海浦东新区海港大道1550号 <a href=“https://www.shmtu.edu.cn”>上海海事大学</a> <a href=“https://cie.shmtu.edu.cn/”>信息工程学院</a></th></tr>
-			</tbody>
-        </table>
-        <h1>Thank you for your contact!</h1>
-        <p>You can use the following information to get contact with the contributor:</p>
-        <table class="contact-info">
-            <tbody>
-				<tr><th>&nbsp&nbsp&nbsp&nbspContributor: Weijie Jiang. Shanghai Maritime University</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbspMail: 202110310195@shmtu.edu.cn or 2196607709@qq.com</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbspTelephone: +86 13917734176</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbspGithub: Flammmming</th></tr>
-				<tr><th>&nbsp&nbsp&nbsp&nbspAdderss: Harbour Road 1550. Pudong New District. Shanghai. China</th></tr>
-				<tr><th><a href=“https://www.shmtu.edu.cn”>&nbsp&nbsp&nbsp&nbspAddress Name: College of Information and Engineering in Shanghai Maritime University</a></th></tr>
-			</tbody>
-        </table>
+</div>
+<div class="content">
+    <h1 style="font-size:60px; text-align: center">墨韵踪迹，我们致力于弘扬中华传统文化</h1>
+    <!--    <p style="font-size:40px;">我们需要您的加入</p>-->
+    <div class="contact-info-1">
+        <div style="font-size:40px; text-align: center;">我们在开发过程中遇到了什么困难？</div>
+        <!--        <br>-->
+        <div class="write this-page-writing">
+            &nbsp&nbsp&nbsp&nbsp我们希望开发出一个全自动的书法范本复现平台，
+            但目前对于书法笔画的识别准确性仍然有待提升，特别是对于草书、行书等书法作品，难以识别其笔画，
+            我们希望您有更好的想法以及算法思想，来优化我们对于书法笔画的识别方法。
+            <!--            <br>&nbsp&nbsp&nbsp&nbsp您可以点击下方按钮跳转到联系方式界面。-->
+        </div>
+        <!--        <button class="btn" style="margin-left: 450px;">联系我们</button>-->
     </div>
+
+    <div class="contact-info-1-picture">
+        <img src="{{ url_for('static', filename='imgs/source/contact/contact-1.jpg') }}">
+    </div>
+    <div class="contact-info-2-picture">
+        <img src="{{ url_for('static', filename='imgs/source/contact/contact-2.jpg') }}">
+    </div>
+    <div class="contact-info-2">
+        <div style="font-size:40px; text-align: center;">我们需要优化什么？</div>
+        <!--        <br>-->
+        <div class="write this-page-writing">
+            &nbsp&nbsp&nbsp&nbsp虽然目前已经实现了书法范本复现视频，但是仍然存在许多问题。<br>
+            &nbsp&nbsp&nbsp&nbsp我们发现笔画的交界处可能会出现笔画意外渲染的情况，即使我们对此已经做了优化。<br>
+            &nbsp&nbsp&nbsp&nbsp此外，我们需要有更好的存储与解决方案，用于优化整个墨韵踪迹系统。
+            <br>&nbsp&nbsp&nbsp&nbsp希望您的加入能为我们解决这些问题。
+            <!--            <br>&nbsp&nbsp&nbsp&nbsp您可以点击下方按钮跳转到联系方式界面。-->
+        </div>
+    </div>
+    <div class="to-contact">
+        <div style="font-size:40px; text-align: center;">如何联系我们？</div>
+        <div style="font-size:40px; text-align: center;">墨韵踪迹，我们期待志同道合的加入</div>
+        <div class="write this-page-writing">
+            邮箱：202110310195@stu.shmtu.edu.cn 或 2196607709@qq.com<br>
+            通讯： 13917734176<br>
+            项目开源地址：<a href="https://github.com/FlAmmmmING/Stroke_Recognition">https://github.com/FlAmmmmING/Stroke_Recognition</a>
+            <a href="masterpiece" class="this-button">
+                    <button class="btn">成品展示</button>
+            </a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

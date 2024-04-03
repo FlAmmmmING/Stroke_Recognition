@@ -17,7 +17,7 @@ def Generate_full_Video(base_path, PictureName, x, y):
     video_dir = base_path + "/Video/" + video_name + '.mp4'
     if os.path.exists(video_dir):
         os.remove(video_dir)
-    fourcc = cv2.VideoWriter.fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter.fourcc(*'H264')
     cols = 100 * character_number
     rows = 100 * y
     fps = 60

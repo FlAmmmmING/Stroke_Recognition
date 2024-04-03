@@ -294,7 +294,7 @@ def Generate_Video(fps_folder, video_folder, gif_folder, Picture):
     video_dir = os.path.join(video_folder, video_name + ".mp4")
     if os.path.exists(video_dir):
         os.remove(video_dir)
-    fourcc = cv2.VideoWriter.fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter.fourcc(*'H264')
     VideoWriter = cv2.VideoWriter(video_dir, fourcc, fps, (cols, rows))
 
     for frame in frames:

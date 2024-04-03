@@ -149,7 +149,7 @@ a {
     color: rgb(33, 33, 33);
 }
 .title {
-    font-family: "华文楷体";
+    font-family: "华文行楷";
     font-size: 60px;
     color: rgba(5, 4, 4, 0.82);
     font-weight: 1000;
@@ -435,6 +435,6 @@ a {
 
 .mainpage-video-position-bottion {
     position: fixed;
-    margin-top: 650px;
-    margin-left: 300px;
+    margin-top: 750px;
+    margin-left: 280px;
 }

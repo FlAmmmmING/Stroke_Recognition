@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORKER-more Information</title>
+    <title>墨客-了解更多</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
     <style>
         .box1 {
@@ -17,6 +17,12 @@
             background-image: url("imgs/background/background_for_mainpage_2.jpg");
             background-size: cover;
             background-attachment: fixed;
+        }
+
+        .this-page-writing {
+            font-size: 45px;
+            margin-top: 30px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -42,29 +48,35 @@
     <ul>
         <li>
             <div class="write position">
-                <div class="top-title">让我们了解一下什么是墨客？</div>
+                <div class="top-title">墨韵踪迹，我们弘扬中华传统文化</div>
             </div>
         </li>
         <li>
             <div class="write position1">
                 <div class="title">书法教育者的辅助伙伴</div>
-                <br>
-                如果您是一位书法教育者，您可以使用墨客提供的功能线上完成书法作品的笔画生成制作。<br>
-                您要做的就是上传书法作品图片，修改文字生成骨架，即可获取最终成品。
-                您可以点击下方或导航栏的“立即体验”来使用墨客。
+                <div class="this-page-writing">
+                    如果您是一位书法教育者，您可以使用墨客提供的功能线上完成书法作品的笔画生成制作。<br>
+                    您要做的就是上传书法作品图片，修改文字生成骨架，即可获取最终成品。
+                    您可以点击下方或导航栏的“立即体验”来使用墨客。
+                </div>
             </div>
 
         </li>
         <li>
             <div class="write position2">
                 <div class="title">书法艺术视频创造者</div>
-                <br>
-                如果您的美化工作需要用到书法作品笔画视频，墨客提供了这样的平台。
-                想要观看墨客创建的作品？请点击下方或导航栏的“成品展示”。
+                <div class="this-page-writing">
+                    如果您的美化工作需要用到书法作品笔画视频，墨客提供了这样的平台。
+                    想要观看墨客创建的作品？请点击下方或导航栏的“成品展示”。
+                </div>
             </div>
             <div class="button-position-more-info">
-                <a href="login"><button class="btn">立即体验</button></a>
-                <a href="masterpiece"><button class="btn">成品展示</button></a>
+                <a href="login">
+                    <button class="btn">立即体验</button>
+                </a>
+                <a href="masterpiece">
+                    <button class="btn">成品展示</button>
+                </a>
             </div>
         </li>
     </ul>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORKER</title>
+    <title>墨客-成品展示</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/css.css') }}">
     <style>
         .box1 {
@@ -61,6 +61,8 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
+
+
     </style>
 </head>
 
@@ -90,25 +92,55 @@
                         点击以下按钮查看成品
                     </div>
                     <div class="masterposition">
-                        <div class="write merge">短语</div>
-                        <button class="btn">精益求精</button>
-                        <button class="btn">登峰造极</button>
-                        <button class="btn">众里寻他千百度</button>
+                        <div class="write merge">介绍</div>
+                        <button class="btn" id="introduction-morker">你好！墨韵踪迹！</button>
                         <br>
-                        <button class="btn">万事胜意</button>
-                        <button class="btn">恭喜发财</button>
-                        <div class="write merge">诗词</div>
-                        <button class="btn">静夜思</button>
-                        <button class="btn">早发白夜城</button>
+                        <div class="write merge">诗词举例</div>
+                        <button class="btn" id="playjingyesi">静夜思-毛笔版</button>
+                        <button class="btn" id="playzaofabaiyecheng">早发白夜城</button>
                     </div>
                 </div>
             </li>
             <li>
-                <video controls width="600px" class="masterpiece-video-position" style="object-fit: cover">
-                    <source src="{{ url_for('static', filename='video/jingyesi.mp4') }}">
+                <video controls width="600px" class="masterpiece-video-position" id="VideoPlayer" style="object-fit: cover">
+                    <source src="" type="video/mp4">
+                    <!--                    <source src="{{ url_for('static', filename='video/jingyesi.mp4') }}">-->
                     点击观看成品展示
                 </video>
             </li>
         </ul>
     </div>
 </div>
+<script>
+    document.getElementById('playjingyesi').addEventListener('click', function () {
+        // 获取视频元素
+        var video = document.getElementById('VideoPlayer');
+
+        // 设置视频源
+        video.src = "{{ url_for('static', filename='video/jingyesi.mp4') }}";
+
+        // 播放视频
+        video.play();
+    });
+    document.getElementById('playzaofabaiyecheng').addEventListener('click', function () {
+        // 获取视频元素
+        var video = document.getElementById('VideoPlayer');
+
+        // 设置视频源
+        video.src = "{{ url_for('static', filename='video/qingzhouyiguowanchongshan.mp4') }}";
+
+        // 播放视频
+        video.play();
+    });
+    document.getElementById('introduction-morker').addEventListener('click', function () {
+        // 获取视频元素
+        var video = document.getElementById('VideoPlayer');
+
+        // 设置视频源
+        video.src = "{{ url_for('static', filename='video/self-introduction.mp4') }}";
+
+        // 播放视频
+        video.play();
+    });
+</script>
+</body>
