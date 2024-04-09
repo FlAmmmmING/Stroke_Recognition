@@ -101,7 +101,7 @@ def get_radius_2(dir_x, dir_y, original_img, core, pre_radius, idx, Stroke):
     radius = max(radius_x, radius_y)
     # if dir_x * dir_y:
     #     radius = round(radius * 1.4142135623730951)
-    if radius - pre_radius >= 2:
+    if abs(radius - pre_radius) >= 2:
         # 判断笔画是否出现崩溃现象
         radius = pre_radius
     return radius

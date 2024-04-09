@@ -315,10 +315,6 @@ function option6(event) {
         let fy = end_y - start_y;
         map[start_x][start_y] = 255;
         map[end_x][end_y] = 255;
-        console.log(start_x);
-        console.log(start_y);
-        console.log(end_x);
-        console.log(end_y);
         let now_x = start_x;
         let now_y = start_y;
         let max_d = Math.max(Math.abs(fx), Math.abs(fy));
@@ -328,13 +324,7 @@ function option6(event) {
             now_x += fx / max_d;
             now_y += fy / max_d;
             map[Math.round(now_x)][Math.round(now_y)] = 255;
-            console.log(now_x);
-            console.log(now_y);
         }
-        // map[end_x][end_y] = 1;
-        // ctx.beginPath();
-        // ctx.moveTo(start_x, start_y);
-        // ctx.strokeStyle = "#ffffff";
     }
     isDrawing ^= 1;
     generate_current_picture();
