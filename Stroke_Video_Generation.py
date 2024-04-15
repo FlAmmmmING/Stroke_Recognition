@@ -278,12 +278,12 @@ def Generate_Video(fps_folder, video_folder, gif_folder, Picture):
     # 提取视频分辨率
     rows, cols = cv2.imread(fps_folder + "/1.jpg").shape[0], cv2.imread(fps_folder + "/1.jpg").shape[1]
     # 下面是生成GIF的代码
-    gif = []
-    for frame in frames:
-        f_path = os.path.join(fps_folder, frame)
-        image = cv2.imread(f_path)
-        gif.append(image)
-    imageio.mimsave(gif_folder + f"/{Picture}.gif", gif, fps=50)
+    # gif = []
+    # for frame in frames:
+    #     f_path = os.path.join(fps_folder, frame)
+    #     image = cv2.imread(f_path)
+    #     gif.append(image)
+    # imageio.mimsave(gif_folder + f"/{Picture}.gif", gif, fps=50)
 
     # 下面是生成MP4的代码
     # 设置 帧数

@@ -2,12 +2,11 @@ import csv
 import json
 import os
 from datetime import datetime
-
 import cv2
-import base64
 import numpy as np
-
-import Back_End, Create_Folder_and_DataSet, Stroke_Video_Generation
+import Back_End
+import Create_Folder_and_DataSet
+import Stroke_Video_Generation
 from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -220,7 +219,7 @@ def Stroke(username):
                     flash('上传成功！请耐心等待！')
                     # 图片上传至后端
                     # 返回 ret_map
-                    # Back_End.start_project(Picture, username, Picture.filename)
+                    Back_End.start_project(Picture, username, Picture.filename)
                     return redirect(url_for('DIY', username=username, PictureName=Picture.filename))
                 except:
                     flash("上传失败，可能的原因是：1.上传的图片格式非jpg 2.图片过大 3.图片不合规")

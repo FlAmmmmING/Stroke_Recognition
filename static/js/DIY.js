@@ -358,6 +358,16 @@ next.addEventListener('click', function () {
     init();
 })
 
+let pre = document.getElementById('pre');
+pre.addEventListener('click', function () {
+    if (picture_number === 0) {
+        return;
+    }
+    picture_number--;
+    cnt -= 2 * 100 * 100;
+    init();
+})
+
 let upload = document.getElementById('upload');
 upload.addEventListener('click', function (event) {
     if (ret_arr.length === 0) {
@@ -372,16 +382,12 @@ upload.addEventListener('click', function (event) {
         },
         body: JSON.stringify({array: [picture_number, ret_arr]})
     }).then(response => response.text()).then(data => {
-        // console.log(data);
-        if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100))
-            alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
-        else
-            alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
+        alert("提交成功！");
     }).catch(error => {
         console.error('Error: ', error);
     })
     if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100)) {
-        console.log("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+        console.log("提交成功！");
         return;
     }
     picture_number++;
@@ -535,16 +541,12 @@ document.addEventListener('keydown', function (event) {
             },
             body: JSON.stringify({array: [picture_number, ret_arr]})
         }).then(response => response.text()).then(data => {
-            // console.log(data);
-            if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100))
-                alert("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
-            else
-                alert("提交成功！已经生成这个文字的视频！稍后请去作品与历史界面查看！");
+                alert("提交成功！");
         }).catch(error => {
             console.error('Error: ', error);
         })
         if (picture_number + 1 === Stroke_Data_Full.length / (100 * 100)) {
-            console.log("已成功提交最后一张图片！请点击\"作品与历史\"查看生成视频以及历史视频！");
+            console.log("提交成功！");
             return;
         }
         picture_number++;
