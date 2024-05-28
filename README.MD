@@ -1,5 +1,5 @@
 <font face="楷体" size=40>墨韵踪迹</font><br>
-<font face="宋体" size=4>该项目是《中国计算机设计大赛》参赛项目</font><br>
+<font face="宋体" size=4>该项目是《中国计算机设计大赛》参赛项目，目前已经获得了上海市市赛一等奖！</font><br>
 <font face="宋体" size=5>这里是墨韵踪迹简短的介绍，您可以在项目设计书中深入了解墨韵踪迹<br>
 项目背景<br>
 ```text
